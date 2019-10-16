@@ -1,5 +1,15 @@
+# Intellij
+.DS_Store
+.idea/
+*.iml
+*.iws
+
+# Maven
+log/
+target/
+
 # Compiled class file
-*.class
+*.classg
 
 # Log file
 *.log
