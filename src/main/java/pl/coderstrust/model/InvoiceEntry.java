@@ -1,17 +1,17 @@
-package pl.coderstrust.datamodel;
+package pl.coderstrust.model;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public class InvoiceEntry {
+public final class InvoiceEntry {
 
-    private String id;
-    private String description;
-    private int quantity;
-    private BigDecimal price;
-    private BigDecimal netValue;
-    private BigDecimal grossValue;
-    private Vat vatRate;
+    private final String id;
+    private final String description;
+    private final int quantity;
+    private final BigDecimal price;
+    private final BigDecimal netValue;
+    private final BigDecimal grossValue;
+    private final Vat vatRate;
 
     public InvoiceEntry(String id, String description, int quantity, BigDecimal price, BigDecimal netValue, BigDecimal grossValue, Vat vatRate) {
         this.id = id;
@@ -27,62 +27,38 @@ public class InvoiceEntry {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getDescription() {
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public int getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
     public BigDecimal getPrice() {
         return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
     }
 
     public BigDecimal getNetValue() {
         return netValue;
     }
 
-    public void setNetValue(BigDecimal netValue) {
-        this.netValue = netValue;
-    }
-
     public BigDecimal getGrossValue() {
         return grossValue;
-    }
-
-    public void setGrossValue(BigDecimal grossValue) {
-        this.grossValue = grossValue;
     }
 
     public Vat getVatRate() {
         return vatRate;
     }
 
-    public void setVatRate(Vat vatRate) {
-        this.vatRate = vatRate;
-    }
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         InvoiceEntry that = (InvoiceEntry) o;
         return quantity == that.quantity &&
                 Objects.equals(id, that.id) &&

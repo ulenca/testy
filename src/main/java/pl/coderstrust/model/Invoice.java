@@ -1,79 +1,67 @@
-package pl.coderstrust.datamodel;
+package pl.coderstrust.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Invoice {
+public final class Invoice {
 
-    private String id;
-    private String number;
-    private LocalDate issuedDate;
-    private LocalDate dueDate;
-    private Company seller;
-    private Company buyer;
-    private List<InvoiceEntry> invoiceEntries;
+    private final String id;
+    private final String number;
+    private final LocalDate issuedDate;
+    private final LocalDate dueDate;
+    private final Company seller;
+    private final Company buyer;
+    private final List<InvoiceEntry> invoiceEntries;
+
+    public Invoice(String id, String number, LocalDate issuedDate, LocalDate dueDate, Company seller, Company buyer, List<InvoiceEntry> invoiceEntries) {
+        this.id = id;
+        this.number = number;
+        this.issuedDate = issuedDate;
+        this.dueDate = dueDate;
+        this.seller = seller;
+        this.buyer = buyer;
+        this.invoiceEntries = invoiceEntries;
+    }
+
 
     public String getId() {
         return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getNumber() {
         return number;
     }
 
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
     public LocalDate getIssuedDate() {
         return issuedDate;
-    }
-
-    public void setIssuedDate(LocalDate issuedDate) {
-        this.issuedDate = issuedDate;
     }
 
     public LocalDate getDueDate() {
         return dueDate;
     }
 
-    public void setDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
-    }
-
     public Company getSeller() {
         return seller;
-    }
-
-    public void setSeller(Company seller) {
-        this.seller = seller;
     }
 
     public Company getBuyer() {
         return buyer;
     }
 
-    public void setBuyer(Company buyer) {
-        this.buyer = buyer;
-    }
-
     public List<InvoiceEntry> getInvoiceEntries() {
-        return invoiceEntries;
-    }
-
-    public void setInvoiceEntries(List<InvoiceEntry> invoiceEntries) {
-        this.invoiceEntries = invoiceEntries;
+        return invoiceEntries == null ? new ArrayList<>() : invoiceEntries;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Invoice invoice = (Invoice) o;
         return Objects.equals(id, invoice.id) &&
                 Objects.equals(number, invoice.number) &&
