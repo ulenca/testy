@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public final class Company {
 
-    private final String id;
+    private final long id;
     private final String name;
     private final String address;
     private final String taxId;
@@ -12,7 +12,7 @@ public final class Company {
     private final String phoneNumber;
     private final String email;
 
-    public Company(String id, String name, String address, String taxId, String accountNumber, String phoneNumber, String email) {
+    public Company(long id, String name, String address, String taxId, String accountNumber, String phoneNumber, String email) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -22,7 +22,7 @@ public final class Company {
         this.email = email;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
@@ -55,15 +55,17 @@ public final class Company {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Company)) {
+            return false;
+        }
         Company company = (Company) o;
-        return Objects.equals(id, company.id) &&
-                Objects.equals(name, company.name) &&
-                Objects.equals(address, company.address) &&
-                Objects.equals(taxId, company.taxId) &&
-                Objects.equals(accountNumber, company.accountNumber) &&
-                Objects.equals(phoneNumber, company.phoneNumber) &&
-                Objects.equals(email, company.email);
+        return id == company.id
+                && name.equals(company.name)
+                && address.equals(company.address)
+                && taxId.equals(company.taxId)
+                && accountNumber.equals(company.accountNumber)
+                && phoneNumber.equals(company.phoneNumber)
+                && email.equals(company.email);
     }
 
     @Override

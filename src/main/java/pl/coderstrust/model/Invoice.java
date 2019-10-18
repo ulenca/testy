@@ -7,26 +7,25 @@ import java.util.Objects;
 
 public final class Invoice {
 
-    private final String id;
+    private final long id;
     private final String number;
     private final LocalDate issuedDate;
     private final LocalDate dueDate;
     private final Company seller;
     private final Company buyer;
-    private final List<InvoiceEntry> invoiceEntries;
+    private final List<InvoiceEntry> entries;
 
-    public Invoice(String id, String number, LocalDate issuedDate, LocalDate dueDate, Company seller, Company buyer, List<InvoiceEntry> invoiceEntries) {
+    public Invoice(long id, String number, LocalDate issuedDate, LocalDate dueDate, Company seller, Company buyer, List<InvoiceEntry> entries) {
         this.id = id;
         this.number = number;
         this.issuedDate = issuedDate;
         this.dueDate = dueDate;
         this.seller = seller;
         this.buyer = buyer;
-        this.invoiceEntries = invoiceEntries;
+        this.entries = entries;
     }
 
-
-    public String getId() {
+    public long getId() {
         return id;
     }
 
@@ -46,12 +45,8 @@ public final class Invoice {
         return seller;
     }
 
-    public Company getBuyer() {
-        return buyer;
-    }
-
-    public List<InvoiceEntry> getInvoiceEntries() {
-        return invoiceEntries == null ? new ArrayList<>() : invoiceEntries;
+    public List<InvoiceEntry> getEntries() {
+        return entries == null ? new ArrayList<>() : entries;
     }
 
     @Override
@@ -59,22 +54,22 @@ public final class Invoice {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof Invoice)) {
             return false;
         }
         Invoice invoice = (Invoice) o;
-        return Objects.equals(id, invoice.id) &&
-                Objects.equals(number, invoice.number) &&
-                Objects.equals(issuedDate, invoice.issuedDate) &&
-                Objects.equals(dueDate, invoice.dueDate) &&
-                Objects.equals(seller, invoice.seller) &&
-                Objects.equals(buyer, invoice.buyer) &&
-                Objects.equals(invoiceEntries, invoice.invoiceEntries);
+        return id == invoice.id
+                && number.equals(invoice.number)
+                && issuedDate.equals(invoice.issuedDate)
+                && dueDate.equals(invoice.dueDate)
+                && seller.equals(invoice.seller)
+                && buyer.equals(invoice.buyer)
+                && entries.equals(invoice.entries);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, number, issuedDate, dueDate, seller, buyer, invoiceEntries);
+        return Objects.hash(id, number, issuedDate, dueDate, seller, buyer, entries);
     }
 
     @Override
@@ -86,7 +81,7 @@ public final class Invoice {
                 ", dueDate=" + dueDate +
                 ", seller=" + seller +
                 ", buyer=" + buyer +
-                ", invoiceEntries=" + invoiceEntries +
+                ", entries=" + entries +
                 '}';
     }
 }

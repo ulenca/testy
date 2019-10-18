@@ -5,15 +5,15 @@ import java.util.Objects;
 
 public final class InvoiceEntry {
 
-    private final String id;
+    private final long id;
     private final String description;
-    private final int quantity;
+    private final long quantity;
     private final BigDecimal price;
     private final BigDecimal netValue;
     private final BigDecimal grossValue;
     private final Vat vatRate;
 
-    public InvoiceEntry(String id, String description, int quantity, BigDecimal price, BigDecimal netValue, BigDecimal grossValue, Vat vatRate) {
+    public InvoiceEntry(long id, String description, long quantity, BigDecimal price, BigDecimal netValue, BigDecimal grossValue, Vat vatRate) {
         this.id = id;
         this.description = description;
         this.quantity = quantity;
@@ -23,7 +23,7 @@ public final class InvoiceEntry {
         this.vatRate = vatRate;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
@@ -31,7 +31,7 @@ public final class InvoiceEntry {
         return description;
     }
 
-    public int getQuantity() {
+    public long getQuantity() {
         return quantity;
     }
 
@@ -56,17 +56,17 @@ public final class InvoiceEntry {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof InvoiceEntry)) {
             return false;
         }
-        InvoiceEntry that = (InvoiceEntry) o;
-        return quantity == that.quantity &&
-                Objects.equals(id, that.id) &&
-                Objects.equals(description, that.description) &&
-                Objects.equals(price, that.price) &&
-                Objects.equals(netValue, that.netValue) &&
-                Objects.equals(grossValue, that.grossValue) &&
-                vatRate == that.vatRate;
+        InvoiceEntry entry = (InvoiceEntry) o;
+        return id == entry.id
+                && description.equals(entry.description)
+                && quantity == entry.quantity
+                && price.equals(entry.price)
+                && netValue.equals(entry.netValue)
+                && grossValue.equals(entry.grossValue)
+                && vatRate == entry.vatRate;
     }
 
     @Override
