@@ -41,11 +41,10 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.0</version>
             </plugin>
-
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.4</version>
+                <version>0.8.5</version>
                 <executions>
                     <execution>
                         <id>jacoco-report</id>
@@ -81,20 +80,16 @@
                                             <minimum>0.50</minimum>
                                         </limit>
                                     </limits>
-                                    <excludes>
-                                        <exclude>database.impl.ConfigurationProvider</exclude>
-                                    </excludes>
                                 </rule>
                             </rules>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>verify</id>
@@ -115,9 +110,14 @@
                     <configLocation>checkstyle-config/checkstyle-checker.xml</configLocation>
                     <encoding>UTF-8</encoding>
                     <consoleOutput>true</consoleOutput>
+                    <sourceDirectories>
+                        <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
+                    </sourceDirectories>
+                    <testSourceDirectories>
+                        <testSourceDirectory>${project.build.testSourceDirectory}</testSourceDirectory>
+                    </testSourceDirectories>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
     <dependencies>
