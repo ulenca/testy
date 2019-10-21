@@ -83,7 +83,6 @@ public final class Company {
                 + ", accountNumber='" + accountNumber + '\''
                 + ", phoneNumber='" + phoneNumber + '\''
                 + ", email='" + email + '\''
-                +
-                '}';
+                + '}';
     }
 }
