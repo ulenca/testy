@@ -75,14 +75,15 @@ public final class Company {
 
     @Override
     public String toString() {
-        return "Company{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", address='" + address + '\'' +
-                ", taxId='" + taxId + '\'' +
-                ", accountNumber='" + accountNumber + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", email='" + email + '\'' +
+        return "Company{"
+                + "id='" + id + '\''
+                + ", name='" + name + '\''
+                + ", address='" + address + '\''
+                + ", taxId='" + taxId + '\''
+                + ", accountNumber='" + accountNumber + '\''
+                + ", phoneNumber='" + phoneNumber + '\''
+                + ", email='" + email + '\''
+                +
                 '}';
     }
 }

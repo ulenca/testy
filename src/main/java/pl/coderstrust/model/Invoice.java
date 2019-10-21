@@ -74,14 +74,14 @@ public final class Invoice {
 
     @Override
     public String toString() {
-        return "Invoice{" +
-                "id='" + id + '\'' +
-                ", number='" + number + '\'' +
-                ", issuedDate=" + issuedDate +
-                ", dueDate=" + dueDate +
-                ", seller=" + seller +
-                ", buyer=" + buyer +
-                ", entries=" + entries +
-                '}';
+        return "Invoice{"
+                + "id='" + id + '\''
+                + ", number='" + number + '\''
+                + ", issuedDate=" + issuedDate
+                + ", dueDate=" + dueDate
+                + ", seller=" + seller
+                + ", buyer=" + buyer
+                + ", entries=" + entries
+                + '}';
     }
 }
