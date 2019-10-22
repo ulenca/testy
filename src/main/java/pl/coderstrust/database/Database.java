@@ -6,19 +6,19 @@ import pl.coderstrust.model.Invoice;
 
 public interface Database {
 
-    void save(Invoice invoice);
+    Invoice save(Invoice invoice) throws DatabaseOperationException;
 
-    Optional<Invoice> getById(Long id);
+    Optional<Invoice> getById(Long id) throws DatabaseOperationException;
 
-    Optional<Invoice> getByNumber(Long number);
+    Optional<Invoice> getByNumber(Long number) throws DatabaseOperationException;
 
-    Collection<Invoice> getAll();
+    Collection<Invoice> getAll() throws DatabaseOperationException;
 
-    void delete(Invoice invoice);
+    void delete(Long id) throws DatabaseOperationException;
 
-    void deleteAll();
+    void deleteAll() throws DatabaseOperationException;
 
-    boolean exists(Long id);
+    boolean exists(Long id) throws DatabaseOperationException;
 
-    long count();
+    long count() throws DatabaseOperationException;
 }
