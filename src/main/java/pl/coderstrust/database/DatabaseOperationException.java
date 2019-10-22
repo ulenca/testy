@@ -5,8 +5,8 @@ public class DatabaseOperationException extends Exception {
         super();
     }
 
-    public DatabaseOperationException(String Message) {
-        super(Message);
+    public DatabaseOperationException(String message) {
+        super(message);
     }
 
     public DatabaseOperationException(Throwable cause) {
