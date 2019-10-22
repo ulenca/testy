@@ -5,7 +5,7 @@ import java.util.Objects;
 
 public final class InvoiceEntry {
 
-    private final long id;
+    private final Long id;
     private final String description;
     private final long quantity;
     private final BigDecimal price;
@@ -92,7 +92,7 @@ public final class InvoiceEntry {
     }
 
     public static final class InvoiceEntryBuilder {
-        private long id;
+        private Long id;
         private String description;
         private long quantity;
         private BigDecimal price;

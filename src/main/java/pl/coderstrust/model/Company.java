@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public final class Company {
 
-    private final long id;
+    private final Long id;
     private final String name;
     private final String address;
     private final String taxId;
@@ -91,7 +91,7 @@ public final class Company {
     }
 
     public static final class CompanyBuilder {
-        private long id;
+        private Long id;
         private String name;
         private String address;
         private String taxId;

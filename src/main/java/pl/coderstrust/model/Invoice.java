@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public final class Invoice {
 
-    private final long id;
+    private final Long id;
     private final String number;
     private final LocalDate issuedDate;
     private final LocalDate dueDate;
@@ -91,7 +91,7 @@ public final class Invoice {
 
     public static final class InvoiceBuilder {
 
-        private long id;
+        private Long id;
         private String number;
         private LocalDate issuedDate;
         private LocalDate dueDate;
