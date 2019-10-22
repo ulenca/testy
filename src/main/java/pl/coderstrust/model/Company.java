@@ -12,14 +12,18 @@ public final class Company {
     private final String phoneNumber;
     private final String email;
 
-    public Company(long id, String name, String address, String taxId, String accountNumber, String phoneNumber, String email) {
-        this.id = id;
-        this.name = name;
-        this.address = address;
-        this.taxId = taxId;
-        this.accountNumber = accountNumber;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
+    private Company(CompanyBuilder builder) {
+        id = builder.id;
+        name = builder.name;
+        address = builder.address;
+        taxId = builder.taxId;
+        accountNumber = builder.accountNumber;
+        phoneNumber = builder.phoneNumber;
+        email = builder.email;
+    }
+
+    public static CompanyBuilder builder() {
+        return new CompanyBuilder();
     }
 
     public long getId() {
@@ -84,5 +88,65 @@ public final class Company {
                 + ", phoneNumber='" + phoneNumber + '\''
                 + ", email='" + email + '\''
                 + '}';
+    }
+
+    public static final class CompanyBuilder {
+        private long id;
+        private String name;
+        private String address;
+        private String taxId;
+        private String accountNumber;
+        private String phoneNumber;
+        private String email;
+
+        public CompanyBuilder withCompany(Company company) {
+            this.id = company.id;
+            this.name = company.name;
+            this.address = company.address;
+            this.taxId = company.taxId;
+            this.accountNumber = company.accountNumber;
+            this.phoneNumber = company.phoneNumber;
+            this.email = company.email;
+            return this;
+        }
+
+        public CompanyBuilder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public CompanyBuilder withId(long id) {
+            this.id = id;
+            return this;
+        }
+
+        public CompanyBuilder withAddress(String address) {
+            this.address = address;
+            return this;
+        }
+
+        public CompanyBuilder withTaxId(String taxId) {
+            this.taxId = taxId;
+            return this;
+        }
+
+        public CompanyBuilder withAccountNumber(String accountNumber) {
+            this.accountNumber = accountNumber;
+            return this;
+        }
+
+        public CompanyBuilder withPhoneNumber(String phoneNumber) {
+            this.phoneNumber = phoneNumber;
+            return this;
+        }
+
+        public CompanyBuilder withEmail(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public Company build() {
+            return new Company(this);
+        }
     }
 }

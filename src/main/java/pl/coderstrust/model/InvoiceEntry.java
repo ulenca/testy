@@ -13,14 +13,18 @@ public final class InvoiceEntry {
     private final BigDecimal grossValue;
     private final Vat vatRate;
 
-    public InvoiceEntry(long id, String description, long quantity, BigDecimal price, BigDecimal netValue, BigDecimal grossValue, Vat vatRate) {
-        this.id = id;
-        this.description = description;
-        this.quantity = quantity;
-        this.price = price;
-        this.netValue = netValue;
-        this.grossValue = grossValue;
-        this.vatRate = vatRate;
+    private InvoiceEntry(InvoiceEntryBuilder builder) {
+        id = builder.id;
+        description = builder.description;
+        quantity = builder.quantity;
+        price = builder.price;
+        netValue = builder.netValue;
+        grossValue = builder.grossValue;
+        vatRate = builder.vatRate;
+    }
+
+    public static InvoiceEntryBuilder builder(){
+        return new InvoiceEntryBuilder();
     }
 
     public long getId() {
@@ -85,5 +89,65 @@ public final class InvoiceEntry {
                 + ", grossValue=" + grossValue
                 + ", vatRate=" + vatRate
                 + '}';
+    }
+
+    public static final class InvoiceEntryBuilder {
+        private long id;
+        private String description;
+        private long quantity;
+        private BigDecimal price;
+        private BigDecimal netValue;
+        private BigDecimal grossValue;
+        private Vat vatRate;
+
+        public InvoiceEntryBuilder withInvoiceEntry(InvoiceEntry invoiceEntry) {
+            this.id = invoiceEntry.id;
+            this.description = invoiceEntry.description;
+            this.quantity = invoiceEntry.quantity;
+            this.price = invoiceEntry.price;
+            this.netValue = invoiceEntry.netValue;
+            this.grossValue = invoiceEntry.grossValue;
+            this.vatRate = invoiceEntry.vatRate;
+            return this;
+        }
+
+        public InvoiceEntryBuilder withId(long id) {
+            this.id = id;
+            return this;
+        }
+
+        public InvoiceEntryBuilder withDescription(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public InvoiceEntryBuilder withQuantity(long quantity) {
+            this.quantity = quantity;
+            return this;
+        }
+
+        public InvoiceEntryBuilder withPrice(BigDecimal price) {
+            this.price = price;
+            return this;
+        }
+
+        public InvoiceEntryBuilder withNetValue(BigDecimal netValue) {
+            this.netValue = netValue;
+            return this;
+        }
+
+        public InvoiceEntryBuilder withGrossValue(BigDecimal grossValue) {
+            this.grossValue = grossValue;
+            return this;
+        }
+
+        public InvoiceEntryBuilder withVatRate(Vat vatRate) {
+            this.vatRate = vatRate;
+            return this;
+        }
+
+        public InvoiceEntry build() {
+            return new InvoiceEntry(this);
+        }
     }
 }
