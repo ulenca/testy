@@ -16,7 +16,10 @@ public class InMemoryDatabase implements Database {
     }
 
     @Override
-    public synchronized Invoice save(Invoice invoice) throws DatabaseOperationException {
+    public synchronized Invoice save(Invoice invoice) {
+        if (invoice == null) {
+            throw new IllegalArgumentException("Invoice cannot be null");
+        }
         if (invoice.getId() != null || storage.containsKey(invoice.getId())) {
             return update(invoice);
         }
@@ -24,24 +27,24 @@ public class InMemoryDatabase implements Database {
     }
 
     private Invoice update(Invoice invoice) {
-        if (invoice == null) {
-            throw new IllegalArgumentException("Inovice cannot be null");
-        }
-        // find the id and update the content
-        return invoice;
+        Invoice invoiceToUpdate = Invoice.builder()
+                .withInvoice(invoice)
+                .build();
+        storage.put(invoiceToUpdate.getId(), invoiceToUpdate);
+        return invoiceToUpdate;
     }
 
     private Invoice add(Invoice invoice) {
-        if (invoice == null) {
-            throw new IllegalArgumentException("Invoice cannot be null");
-        }
-        Invoice invoiceToAdd =
-        storage.put(invoice.getId(), invoice);
-        return invoice;
+        Invoice invoiceToAdd = Invoice.builder()
+                .withInvoice(invoice)
+                .withId(nextId.getAndIncrement())
+                .build();
+        storage.put(invoiceToAdd.getId(), invoiceToAdd);
+        return invoiceToAdd;
     }
 
     @Override
-    public Optional<Invoice> getById(Long id) throws DatabaseOperationException {
+    public Optional<Invoice> getById(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("Id cannot be null");
         }
@@ -49,7 +52,7 @@ public class InMemoryDatabase implements Database {
     }
 
     @Override
-    public Optional<Invoice> getByNumber(String number) throws DatabaseOperationException {
+    public Optional<Invoice> getByNumber(String number) {
         if (number == null) {
             throw new IllegalArgumentException("Number cannot be null");
         }
@@ -59,7 +62,7 @@ public class InMemoryDatabase implements Database {
     }
 
     @Override
-    public Collection<Invoice> getAll() throws DatabaseOperationException {
+    public Collection<Invoice> getAll() {
         return storage.values();
     }
 
@@ -68,16 +71,19 @@ public class InMemoryDatabase implements Database {
         if (id == null) {
             throw new IllegalArgumentException("Id cannot be null");
         }
+        if (!storage.containsKey(id)) {
+            throw new DatabaseOperationException("There is no invoice with such id.");
+        }
         storage.remove(id);
     }
 
     @Override
-    public synchronized void deleteAll() throws DatabaseOperationException {
+    public synchronized void deleteAll() {
         storage.clear();
     }
 
     @Override
-    public boolean exists(Long id) throws DatabaseOperationException {
+    public boolean exists(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("Id cannot be null");
         }
