@@ -23,7 +23,7 @@ public final class InvoiceEntry {
         vatRate = builder.vatRate;
     }
 
-    public static InvoiceEntryBuilder builder(){
+    public static InvoiceEntryBuilder builder() {
         return new InvoiceEntryBuilder();
     }
 
