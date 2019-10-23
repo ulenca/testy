@@ -29,7 +29,7 @@ public final class Invoice {
         return new InvoiceBuilder();
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -62,7 +62,7 @@ public final class Invoice {
             return false;
         }
         Invoice invoice = (Invoice) o;
-        return id == invoice.id
+        return id.equals(invoice.id)
                 && number.equals(invoice.number)
                 && issuedDate.equals(invoice.issuedDate)
                 && dueDate.equals(invoice.dueDate)
@@ -90,7 +90,6 @@ public final class Invoice {
     }
 
     public static final class InvoiceBuilder {
-
         private Long id;
         private String number;
         private LocalDate issuedDate;
@@ -110,7 +109,7 @@ public final class Invoice {
             return this;
         }
 
-        public InvoiceBuilder withId(long id) {
+        public InvoiceBuilder withId(Long id) {
             this.id = id;
             return this;
         }

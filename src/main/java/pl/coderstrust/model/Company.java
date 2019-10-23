@@ -26,7 +26,7 @@ public final class Company {
         return new CompanyBuilder();
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -63,7 +63,7 @@ public final class Company {
             return false;
         }
         Company company = (Company) o;
-        return id == company.id
+        return id.equals(company.id)
                 && name.equals(company.name)
                 && address.equals(company.address)
                 && taxId.equals(company.taxId)
@@ -115,7 +115,7 @@ public final class Company {
             return this;
         }
 
-        public CompanyBuilder withId(long id) {
+        public CompanyBuilder withId(Long id) {
             this.id = id;
             return this;
         }

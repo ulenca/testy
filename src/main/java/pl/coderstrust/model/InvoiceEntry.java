@@ -27,7 +27,7 @@ public final class InvoiceEntry {
         return new InvoiceEntryBuilder();
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -64,7 +64,7 @@ public final class InvoiceEntry {
             return false;
         }
         InvoiceEntry entry = (InvoiceEntry) o;
-        return id == entry.id
+        return id.equals(entry.id)
                 && description.equals(entry.description)
                 && quantity == entry.quantity
                 && price.equals(entry.price)
@@ -111,7 +111,7 @@ public final class InvoiceEntry {
             return this;
         }
 
-        public InvoiceEntryBuilder withId(long id) {
+        public InvoiceEntryBuilder withId(Long id) {
             this.id = id;
             return this;
         }
