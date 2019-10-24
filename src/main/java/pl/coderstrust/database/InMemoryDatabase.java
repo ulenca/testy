@@ -91,7 +91,7 @@ public class InMemoryDatabase implements Database {
     }
 
     @Override
-    public long count() throws DatabaseOperationException {
+    public long count() {
         return storage.size();
     }
 }
