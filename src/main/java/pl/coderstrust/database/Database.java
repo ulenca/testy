@@ -10,7 +10,7 @@ public interface Database {
 
     Optional<Invoice> getById(Long id) throws DatabaseOperationException;
 
-    Optional<Invoice> getByNumber(Long number) throws DatabaseOperationException;
+    Optional<Invoice> getByNumber(String number) throws DatabaseOperationException;
 
     Collection<Invoice> getAll() throws DatabaseOperationException;
 
