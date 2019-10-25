@@ -52,25 +52,27 @@ public class InvoiceService {
 
     public Invoice updateInvoice(Invoice invoice) throws ServiceOperationException {
         Objects.requireNonNull(invoice, "Invoice cannot be null");
-        if(!invoiceExists(invoice.getId())) {
+        if (invoiceExists(invoice.getId())) {
+            try {
+                return repository.save(invoice);
+            } catch (DatabaseOperationException e) {
+                throw new ServiceOperationException("Failed to update invoice");
+            }
+        } else {
             throw new ServiceOperationException("Failed to update invoice. There is no invoice with id= " + invoice.getId());
-        }
-        try {
-            return repository.save(invoice);
-        } catch (DatabaseOperationException e) {
-            throw new ServiceOperationException("Failed to update invoice");
         }
     }
 
     public void deleteInvoiceById(Long id) throws ServiceOperationException {
         Objects.requireNonNull(id, "Id cannot be null");
-        if(!invoiceExists(id)) {
+        if (invoiceExists(id)) {
+            try {
+                repository.delete(id);
+            } catch (DatabaseOperationException e) {
+                throw new ServiceOperationException("Failed to delete invoice");
+            }
+        } else {
             throw new ServiceOperationException("Failed to delete invoice. There is no invoice with id= " + id);
-        }
-        try {
-            repository.delete(id);
-        } catch (DatabaseOperationException e) {
-            throw new ServiceOperationException("Failed to delete invoice");
         }
     }
 

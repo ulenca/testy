@@ -3,7 +3,10 @@ package pl.coderstrust.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -37,7 +40,7 @@ class InvoiceServiceTest {
     }
 
     @Test
-    void InvoiceServiceConstructorThrowsErrorTest() {
+    void invoiceServiceConstructorThrowsErrorTest() {
         assertThrows(NullPointerException.class, () -> new InvoiceService(null));
     }
 
@@ -128,8 +131,8 @@ class InvoiceServiceTest {
     @Test
     void invoiceExistsTest() throws DatabaseOperationException, ServiceOperationException {
         Invoice invoice = createInvoiceNo1();
-            when(mockRepository.exists(invoice.getId())).thenReturn(true);
-            assertTrue(invoiceService.invoiceExists(invoice.getId()));
+        when(mockRepository.exists(invoice.getId())).thenReturn(true);
+        assertTrue(invoiceService.invoiceExists(invoice.getId()));
     }
 
     @Test
