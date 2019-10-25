@@ -17,8 +17,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pl.coderstrust.database.Database;
 import pl.coderstrust.database.DatabaseOperationException;
@@ -30,23 +30,15 @@ import pl.coderstrust.model.Vat;
 @ExtendWith(MockitoExtension.class)
 class InvoiceServiceTest {
 
-    private Database mockRepository;
+    @Mock
+    private Database database;
+
+    @InjectMocks
     private InvoiceService invoiceService;
-
-    @BeforeEach
-    void init() {
-        mockRepository = mock(Database.class);
-        invoiceService = new InvoiceService(mockRepository);
-    }
-
-    @Test
-    void invoiceServiceConstructorThrowsErrorTest() {
-        assertThrows(NullPointerException.class, () -> new InvoiceService(null));
-    }
 
     @Test
     void getAllInvoicesTest() throws ServiceOperationException, DatabaseOperationException {
-        when(mockRepository.getAll()).thenReturn(createInvoices());
+        when(database.getAll()).thenReturn(createInvoices());
         assertEquals(createInvoices(),invoiceService.getAllInvoices());
     }
 
@@ -54,14 +46,14 @@ class InvoiceServiceTest {
     void getByIdTest() throws DatabaseOperationException, ServiceOperationException {
         Invoice invoice = createInvoiceNo1();
         Optional<Invoice> optionalInvoice = Optional.of(invoice);
-        when(mockRepository.getById(invoice.getId())).thenReturn(optionalInvoice);
+        when(database.getById(invoice.getId())).thenReturn(optionalInvoice);
         assertEquals(optionalInvoice, invoiceService.getById(invoice.getId()));
     }
 
     @Test
     void getByIdThrowsErrorsTest() throws DatabaseOperationException {
         Long id = 1L;
-        when(mockRepository.getById(id)).thenThrow(new DatabaseOperationException());
+        when(database.getById(id)).thenThrow(new DatabaseOperationException());
         assertThrows(NullPointerException.class, () -> invoiceService.getById(null));
         assertThrows(ServiceOperationException.class, () -> invoiceService.getById(id));
     }
@@ -70,14 +62,14 @@ class InvoiceServiceTest {
     void getByNumberTest() throws DatabaseOperationException, ServiceOperationException {
         Invoice invoice = createInvoiceNo1();
         Optional<Invoice> optionalInvoice = Optional.of(invoice);
-        when(mockRepository.getByNumber(invoice.getNumber())).thenReturn(optionalInvoice);
+        when(database.getByNumber(invoice.getNumber())).thenReturn(optionalInvoice);
         assertEquals(optionalInvoice, invoiceService.getByNumber(invoice.getNumber()));
     }
 
     @Test
     void getByNumberThrowsErrorTest() throws DatabaseOperationException {
         String name = "name";
-        when(mockRepository.getByNumber(name)).thenThrow(new DatabaseOperationException());
+        when(database.getByNumber(name)).thenThrow(new DatabaseOperationException());
         assertThrows(NullPointerException.class,() -> invoiceService.getByNumber(null));
         assertThrows(ServiceOperationException.class,() -> invoiceService.getByNumber(name));
     }
@@ -85,14 +77,14 @@ class InvoiceServiceTest {
     @Test
     void addInvoiceTest() throws DatabaseOperationException, ServiceOperationException {
         Invoice invoice = createInvoiceNo1();
-        when(mockRepository.save(invoice)).thenReturn(invoice);
+        when(database.save(invoice)).thenReturn(invoice);
         assertEquals(invoice, invoiceService.addInvoice(invoice));
     }
 
     @Test
     void addInvoiceThrowsErrorTest() throws DatabaseOperationException {
         Invoice invoice = createInvoiceNo1();
-        when(mockRepository.save(invoice)).thenThrow(new DatabaseOperationException());
+        when(database.save(invoice)).thenThrow(new DatabaseOperationException());
         assertThrows(NullPointerException.class, () -> invoiceService.addInvoice(null));
         assertThrows(ServiceOperationException.class, () -> invoiceService.addInvoice(invoice));
     }
@@ -100,16 +92,16 @@ class InvoiceServiceTest {
     @Test
     void updateInvoice() throws DatabaseOperationException, ServiceOperationException {
         Invoice invoice = createInvoiceNo1();
-        when(mockRepository.save(invoice)).thenReturn(invoice);
-        when(mockRepository.exists(invoice.getId())).thenReturn(true);
+        when(database.save(invoice)).thenReturn(invoice);
+        when(database.exists(invoice.getId())).thenReturn(true);
         assertEquals(invoice, invoiceService.updateInvoice(invoice));
     }
 
     @Test
     void updateInvoiceThrowsErrorTest() throws DatabaseOperationException {
         Invoice invoice = createInvoiceNo1();
-        when(mockRepository.save(invoice)).thenThrow(new DatabaseOperationException());
-        when(mockRepository.exists(invoice.getId())).thenReturn(true);
+        when(database.save(invoice)).thenThrow(new DatabaseOperationException());
+        when(database.exists(invoice.getId())).thenReturn(true);
         assertThrows(NullPointerException.class, () -> invoiceService.updateInvoice(null));
         assertThrows(ServiceOperationException.class, () -> invoiceService.updateInvoice(invoice));
     }
@@ -117,28 +109,28 @@ class InvoiceServiceTest {
     @Test
     void deleteInvoiceByIdTest() throws DatabaseOperationException, ServiceOperationException {
         Long id = 1L;
-        doNothing().when(mockRepository).delete(id);
-        when(mockRepository.exists(id)).thenReturn(true);
+        doNothing().when(database).delete(id);
+        when(database.exists(id)).thenReturn(true);
         invoiceService.deleteInvoiceById(id);
     }
 
     @Test
     void deleteInvoiceByIdThrowsErrorTest() throws DatabaseOperationException {
-        doThrow(new DatabaseOperationException()).when(mockRepository).deleteAll();
+        doThrow(new DatabaseOperationException()).when(database).deleteAll();
         assertThrows(ServiceOperationException.class, () -> invoiceService.deleteAllInvoices());
     }
 
     @Test
     void invoiceExistsTest() throws DatabaseOperationException, ServiceOperationException {
         Invoice invoice = createInvoiceNo1();
-        when(mockRepository.exists(invoice.getId())).thenReturn(true);
+        when(database.exists(invoice.getId())).thenReturn(true);
         assertTrue(invoiceService.invoiceExists(invoice.getId()));
     }
 
     @Test
     void invoiceExistsThrowErrorTest() throws DatabaseOperationException {
         Long id = 1L;
-        when(mockRepository.exists(id)).thenThrow(new DatabaseOperationException());
+        when(database.exists(id)).thenThrow(new DatabaseOperationException());
         assertThrows(NullPointerException.class, () -> invoiceService.invoiceExists(null));
         assertThrows(ServiceOperationException.class, () -> invoiceService.invoiceExists(id));
     }

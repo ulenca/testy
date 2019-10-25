@@ -9,15 +9,15 @@ import pl.coderstrust.database.DatabaseOperationException;
 import pl.coderstrust.model.Invoice;
 
 public class InvoiceService {
-    private Database repository;
+    private Database database;
 
-    public InvoiceService(Database repository) {
-        this.repository = Objects.requireNonNull(repository, "Repository cannot be null");
+    public InvoiceService(Database database) {
+        this.database = database;
     }
 
     public Collection<Invoice> getAllInvoices() throws ServiceOperationException {
         try {
-            return new ArrayList<>(repository.getAll());
+            return database.getAll();
         } catch (DatabaseOperationException e) {
             throw new ServiceOperationException("Failed to get all invoices");
         }
@@ -26,7 +26,7 @@ public class InvoiceService {
     public Optional<Invoice> getById(Long id) throws ServiceOperationException {
         Objects.requireNonNull(id, "Id cannot be null");
         try {
-            return repository.getById(id);
+            return database.getById(id);
         } catch (DatabaseOperationException e) {
             throw new ServiceOperationException("Failed to get invoice by id");
         }
@@ -35,7 +35,7 @@ public class InvoiceService {
     public Optional<Invoice> getByNumber(String number) throws ServiceOperationException {
         Objects.requireNonNull(number, "Number cannot be null");
         try {
-            return repository.getByNumber(number);
+            return database.getByNumber(number);
         } catch (DatabaseOperationException e) {
             throw new ServiceOperationException("Failed to get invoice by number");
         }
@@ -44,7 +44,7 @@ public class InvoiceService {
     public Invoice addInvoice(Invoice invoice) throws ServiceOperationException {
         Objects.requireNonNull(invoice, "Invoice cannot be null");
         try {
-            return repository.save(invoice);
+            return database.save(invoice);
         } catch (DatabaseOperationException e) {
             throw new ServiceOperationException("Failed to add invoice");
         }
@@ -54,7 +54,7 @@ public class InvoiceService {
         Objects.requireNonNull(invoice, "Invoice cannot be null");
         if (invoiceExists(invoice.getId())) {
             try {
-                return repository.save(invoice);
+                return database.save(invoice);
             } catch (DatabaseOperationException e) {
                 throw new ServiceOperationException("Failed to update invoice");
             }
@@ -67,7 +67,7 @@ public class InvoiceService {
         Objects.requireNonNull(id, "Id cannot be null");
         if (invoiceExists(id)) {
             try {
-                repository.delete(id);
+                database.delete(id);
             } catch (DatabaseOperationException e) {
                 throw new ServiceOperationException("Failed to delete invoice");
             }
@@ -78,7 +78,7 @@ public class InvoiceService {
 
     public void deleteAllInvoices() throws ServiceOperationException {
         try {
-            repository.deleteAll();
+            database.deleteAll();
         } catch (DatabaseOperationException e) {
             throw new ServiceOperationException("Failed to delete invoices");
         }
@@ -87,10 +87,9 @@ public class InvoiceService {
     public boolean invoiceExists(Long id) throws ServiceOperationException {
         Objects.requireNonNull(id, "Id cannot be null");
         try {
-            return repository.exists(id);
+            return database.exists(id);
         } catch (DatabaseOperationException e) {
             throw new ServiceOperationException("Failed to perform check");
         }
     }
 }
-
