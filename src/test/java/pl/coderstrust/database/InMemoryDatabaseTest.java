@@ -1,5 +1,11 @@
 package pl.coderstrust.database;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static pl.coderstrust.generators.InvoiceGenerator.createInvoice1;
+import static pl.coderstrust.generators.InvoiceGenerator.createInvoice2;
+import static pl.coderstrust.generators.InvoiceGenerator.createInvoice3;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,11 +14,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.coderstrust.model.Invoice;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static pl.coderstrust.generators.InvoiceGenerator.createInvoice1;
-import static pl.coderstrust.generators.InvoiceGenerator.createInvoice2;
 
 public class InMemoryDatabaseTest {
 
@@ -33,7 +34,7 @@ public class InMemoryDatabaseTest {
 
     @Test
     void saveMethodShouldAddInvoice() {
-        Invoice invoice = db.save(createInvoice1());
+        Invoice invoice = db.save(createInvoice3());
         Assertions.assertEquals(invoice, storage.get(1L));
     }
 
@@ -67,15 +68,15 @@ public class InMemoryDatabaseTest {
     void shouldGetInvoiceByNumber() {
         Optional<Invoice> invoice1 = Optional.ofNullable(db.save(createInvoice1()));
         Assertions.assertEquals(invoice1, storage.values()
-                .stream()
-                .filter(invoice -> invoice.getNumber().equals("FV2019001"))
-                .findFirst());
+            .stream()
+            .filter(invoice -> invoice.getNumber().equals("FV2019001"))
+            .findFirst());
     }
 
     @Test
     void shouldGetAllInvoices() {
-        db.save(createInvoice1());
-        db.save(createInvoice2());
+        storage.put(1L, createInvoice1());
+        storage.put(2L, createInvoice2());
         Assertions.assertEquals(storage.values(), db.getAll());
     }
 
