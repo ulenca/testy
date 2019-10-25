@@ -70,6 +70,7 @@
                         <exclude>/pl/coderstrust/database/DatabaseOperationException.class</exclude>
                         <exclude>/pl/coderstrust/services/InvoiceOperationException.class</exclude>
                         <exclude>/pl/coderstrust/Application.class</exclude>
+                        <exclude>/pl/coderstrust/services/ServiceOperationException.class</exclude>
                     </excludes>
                 </configuration>
                 <executions>
