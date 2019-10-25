@@ -72,7 +72,7 @@ public class InMemoryDatabase implements Database {
             throw new IllegalArgumentException("Id cannot be null");
         }
         if (!storage.containsKey(id)) {
-            throw new DatabaseOperationException("There is no invoice with such id.");
+            throw new DatabaseOperationException("There is no invoice with such id");
         }
         storage.remove(id);
     }
