@@ -43,6 +43,12 @@ class InvoiceServiceTest {
     }
 
     @Test
+    void getAllInvoicesThrowsErrorTest() throws DatabaseOperationException {
+        when(database.getAll()).thenThrow(new DatabaseOperationException());
+        assertThrows(ServiceOperationException.class, () -> invoiceService.getAllInvoices());
+    }
+
+    @Test
     void getByIdTest() throws DatabaseOperationException, ServiceOperationException {
         Invoice invoice = createInvoiceNo1();
         Optional<Invoice> optionalInvoice = Optional.of(invoice);
