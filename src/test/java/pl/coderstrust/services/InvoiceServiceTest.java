@@ -60,7 +60,7 @@ class InvoiceServiceTest {
     void getByIdThrowsErrorsTest() throws DatabaseOperationException {
         Long id = 1L;
         when(database.getById(id)).thenThrow(new DatabaseOperationException());
-        assertThrows(NullPointerException.class, () -> invoiceService.getById(null));
+        assertThrows(IllegalArgumentException.class, () -> invoiceService.getById(null));
         assertThrows(ServiceOperationException.class, () -> invoiceService.getById(id));
     }
 
@@ -76,7 +76,7 @@ class InvoiceServiceTest {
     void getByNumberThrowsErrorTest() throws DatabaseOperationException {
         String name = "name";
         when(database.getByNumber(name)).thenThrow(new DatabaseOperationException());
-        assertThrows(NullPointerException.class,() -> invoiceService.getByNumber(null));
+        assertThrows(IllegalArgumentException.class,() -> invoiceService.getByNumber(null));
         assertThrows(ServiceOperationException.class,() -> invoiceService.getByNumber(name));
     }
 
@@ -91,7 +91,7 @@ class InvoiceServiceTest {
     void addInvoiceThrowsErrorTest() throws DatabaseOperationException {
         Invoice invoice = createInvoiceNo1();
         when(database.save(invoice)).thenThrow(new DatabaseOperationException());
-        assertThrows(NullPointerException.class, () -> invoiceService.addInvoice(null));
+        assertThrows(IllegalArgumentException.class, () -> invoiceService.addInvoice(null));
         assertThrows(ServiceOperationException.class, () -> invoiceService.addInvoice(invoice));
     }
 
@@ -108,7 +108,7 @@ class InvoiceServiceTest {
         Invoice invoice = createInvoiceNo1();
         when(database.save(invoice)).thenThrow(new DatabaseOperationException());
         when(database.exists(invoice.getId())).thenReturn(true);
-        assertThrows(NullPointerException.class, () -> invoiceService.updateInvoice(null));
+        assertThrows(IllegalArgumentException.class, () -> invoiceService.updateInvoice(null));
         assertThrows(ServiceOperationException.class, () -> invoiceService.updateInvoice(invoice));
     }
 
@@ -137,7 +137,7 @@ class InvoiceServiceTest {
     void invoiceExistsThrowErrorTest() throws DatabaseOperationException {
         Long id = 1L;
         when(database.exists(id)).thenThrow(new DatabaseOperationException());
-        assertThrows(NullPointerException.class, () -> invoiceService.invoiceExists(null));
+        assertThrows(IllegalArgumentException.class, () -> invoiceService.invoiceExists(null));
         assertThrows(ServiceOperationException.class, () -> invoiceService.invoiceExists(id));
     }
 

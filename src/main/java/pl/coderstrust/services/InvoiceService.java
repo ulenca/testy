@@ -19,60 +19,73 @@ public class InvoiceService {
         try {
             return database.getAll();
         } catch (DatabaseOperationException e) {
-            throw new ServiceOperationException("Failed to get all invoices");
+            throw new ServiceOperationException("Failed to get all invoices", e);
         }
     }
 
     public Optional<Invoice> getById(Long id) throws ServiceOperationException {
-        Objects.requireNonNull(id, "Id cannot be null");
+        if (id == null) {
+            throw new IllegalArgumentException("Id cannot be null");
+        }
         try {
             return database.getById(id);
         } catch (DatabaseOperationException e) {
-            throw new ServiceOperationException("Failed to get invoice by id");
+            throw new ServiceOperationException("Failed to get invoice by id", e);
         }
     }
 
     public Optional<Invoice> getByNumber(String number) throws ServiceOperationException {
-        Objects.requireNonNull(number, "Number cannot be null");
+        if (number == null) {
+            throw new IllegalArgumentException("Number cannot be null");
+        }
         try {
             return database.getByNumber(number);
         } catch (DatabaseOperationException e) {
-            throw new ServiceOperationException("Failed to get invoice by number");
+            throw new ServiceOperationException("Failed to get invoice by number", e);
         }
     }
 
     public Invoice addInvoice(Invoice invoice) throws ServiceOperationException {
-        Objects.requireNonNull(invoice, "Invoice cannot be null");
+        if (invoice == null) {
+            throw new IllegalArgumentException("Invoice cannot be null");
+        }
         try {
+            Long invoiceId = invoice.getId();
+            if (invoiceId != null && database.exists(invoiceId)) {
+                throw new ServiceOperationException("Invoice already exists in database.");
+            }
             return database.save(invoice);
         } catch (DatabaseOperationException e) {
-            throw new ServiceOperationException("Failed to add invoice");
+            throw new ServiceOperationException("Failed to add invoice", e);
         }
     }
 
     public Invoice updateInvoice(Invoice invoice) throws ServiceOperationException {
-        Objects.requireNonNull(invoice, "Invoice cannot be null");
-        if (invoiceExists(invoice.getId())) {
-            try {
-                return database.save(invoice);
-            } catch (DatabaseOperationException e) {
-                throw new ServiceOperationException("Failed to update invoice");
+        if (invoice == null) {
+            throw new IllegalArgumentException("Invoice cannot be null");
+        }
+        try {
+            Long invoiceId = invoice.getId();
+            if (invoiceId == null || !database.exists(invoiceId)) {
+                throw new ServiceOperationException("Invoice does not exist in database.");
             }
-        } else {
-            throw new ServiceOperationException("Failed to update invoice. There is no invoice with id= " + invoice.getId());
+            return database.save(invoice);
+        } catch (DatabaseOperationException e) {
+            throw new ServiceOperationException("Failed to update invoice", e);
         }
     }
 
     public void deleteInvoiceById(Long id) throws ServiceOperationException {
-        Objects.requireNonNull(id, "Id cannot be null");
-        if (invoiceExists(id)) {
-            try {
-                database.delete(id);
-            } catch (DatabaseOperationException e) {
-                throw new ServiceOperationException("Failed to delete invoice");
+        if (id == null) {
+            throw new IllegalArgumentException("Id cannot be null");
+        }
+        try {
+            if (!database.exists(id)) {
+                throw new ServiceOperationException("Invoice does not exist in database.");
             }
-        } else {
-            throw new ServiceOperationException("Failed to delete invoice. There is no invoice with id= " + id);
+            database.delete(id);
+        } catch (DatabaseOperationException e) {
+            throw new ServiceOperationException("Failed to delete invoice", e);
         }
     }
 
@@ -80,16 +93,18 @@ public class InvoiceService {
         try {
             database.deleteAll();
         } catch (DatabaseOperationException e) {
-            throw new ServiceOperationException("Failed to delete invoices");
+            throw new ServiceOperationException("Failed to delete invoices", e);
         }
     }
 
     public boolean invoiceExists(Long id) throws ServiceOperationException {
-        Objects.requireNonNull(id, "Id cannot be null");
+        if (id == null) {
+            throw new IllegalArgumentException("Id cannot be null");
+        }
         try {
             return database.exists(id);
         } catch (DatabaseOperationException e) {
-            throw new ServiceOperationException("Failed to perform check");
+            throw new ServiceOperationException("Failed to perform check", e);
         }
     }
 }
