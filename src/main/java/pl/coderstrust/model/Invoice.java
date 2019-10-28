@@ -25,7 +25,7 @@ public final class Invoice {
         entries = builder.entries;
     }
 
-    public InvoiceBuilder builder() {
+    public static InvoiceBuilder builder() {
         return new InvoiceBuilder();
     }
 
