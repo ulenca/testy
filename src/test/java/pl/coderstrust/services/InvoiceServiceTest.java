@@ -1,6 +1,7 @@
 package pl.coderstrust.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doNothing;
@@ -14,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -37,9 +37,10 @@ class InvoiceServiceTest {
     private InvoiceService invoiceService;
 
     @Test
-    void getAllInvoicesTest() throws ServiceOperationException, DatabaseOperationException {
-        when(database.getAll()).thenReturn(createInvoices());
-        assertEquals(createInvoices(),invoiceService.getAllInvoices());
+    void shouldReturnAllInvoicesTest() throws ServiceOperationException, DatabaseOperationException {
+        List<Invoice> invoices = List.of(createSampleInvoice(), createSampleInvoice());
+        when(database.getAll()).thenReturn(invoices);
+        assertEquals(invoices, invoiceService.getAllInvoices());
     }
 
     @Test
@@ -50,7 +51,7 @@ class InvoiceServiceTest {
 
     @Test
     void getByIdTest() throws DatabaseOperationException, ServiceOperationException {
-        Invoice invoice = createInvoiceNo1();
+        Invoice invoice = createSampleInvoice();
         Optional<Invoice> optionalInvoice = Optional.of(invoice);
         when(database.getById(invoice.getId())).thenReturn(optionalInvoice);
         assertEquals(optionalInvoice, invoiceService.getById(invoice.getId()));
@@ -66,7 +67,7 @@ class InvoiceServiceTest {
 
     @Test
     void getByNumberTest() throws DatabaseOperationException, ServiceOperationException {
-        Invoice invoice = createInvoiceNo1();
+        Invoice invoice = createSampleInvoice();
         Optional<Invoice> optionalInvoice = Optional.of(invoice);
         when(database.getByNumber(invoice.getNumber())).thenReturn(optionalInvoice);
         assertEquals(optionalInvoice, invoiceService.getByNumber(invoice.getNumber()));
@@ -82,14 +83,14 @@ class InvoiceServiceTest {
 
     @Test
     void addInvoiceTest() throws DatabaseOperationException, ServiceOperationException {
-        Invoice invoice = createInvoiceNo1();
+        Invoice invoice = createSampleInvoice();
         when(database.save(invoice)).thenReturn(invoice);
         assertEquals(invoice, invoiceService.addInvoice(invoice));
     }
 
     @Test
     void addInvoiceThrowsErrorTest() throws DatabaseOperationException {
-        Invoice invoice = createInvoiceNo1();
+        Invoice invoice = createSampleInvoice();
         when(database.save(invoice)).thenThrow(new DatabaseOperationException());
         assertThrows(IllegalArgumentException.class, () -> invoiceService.addInvoice(null));
         assertThrows(ServiceOperationException.class, () -> invoiceService.addInvoice(invoice));
@@ -97,7 +98,7 @@ class InvoiceServiceTest {
 
     @Test
     void updateInvoice() throws DatabaseOperationException, ServiceOperationException {
-        Invoice invoice = createInvoiceNo1();
+        Invoice invoice = createSampleInvoice();
         when(database.save(invoice)).thenReturn(invoice);
         when(database.exists(invoice.getId())).thenReturn(true);
         assertEquals(invoice, invoiceService.updateInvoice(invoice));
@@ -105,7 +106,7 @@ class InvoiceServiceTest {
 
     @Test
     void updateInvoiceThrowsErrorTest() throws DatabaseOperationException {
-        Invoice invoice = createInvoiceNo1();
+        Invoice invoice = createSampleInvoice();
         when(database.save(invoice)).thenThrow(new DatabaseOperationException());
         when(database.exists(invoice.getId())).thenReturn(true);
         assertThrows(IllegalArgumentException.class, () -> invoiceService.updateInvoice(null));
@@ -121,33 +122,71 @@ class InvoiceServiceTest {
     }
 
     @Test
-    void deleteInvoiceByIdThrowsErrorTest() throws DatabaseOperationException {
-        doThrow(new DatabaseOperationException()).when(database).deleteAll();
+    void deleteInvoiceMethodShouldThrowExceptionWhenAnErrorOccurDuringDeletingInvoiceByIdFromDatabase() throws DatabaseOperationException, ServiceOperationException {
+        Long id = 1L;
+        when(database.exists(id)).thenReturn(true);
+        doThrow(DatabaseOperationException.class).when(database).delete(id);
+        assertThrows(ServiceOperationException.class, () -> invoiceService.deleteInvoiceById(id));
+    }
+
+    @Test
+    void deleteInvoiceMethodShouldThrowExceptionForNullInvoiceId() {
+        Long id = 1L;
+        assertThrows(IllegalArgumentException.class, () -> invoiceService.deleteInvoiceById(null));
+    }
+
+    @Test
+    void deleteInvoiceMethodShouldThrowExceptionWhenInvoiceDoesNotExistInDatabase() throws DatabaseOperationException {
+        Long id = 1L;
+        when(database.exists(id)).thenReturn(false);
+        assertThrows(ServiceOperationException.class, () -> invoiceService.deleteInvoiceById(id));
+    }
+
+    @Test
+    void deleteAllInvoicesTest() throws DatabaseOperationException, ServiceOperationException {
+        doNothing().when(database).deleteAll();
+        invoiceService.deleteAllInvoices();
+    }
+
+    @Test
+    void deleteAllInvoicesTestThrowsError() throws DatabaseOperationException, ServiceOperationException {
+        doThrow(DatabaseOperationException.class).when(database).deleteAll();
         assertThrows(ServiceOperationException.class, () -> invoiceService.deleteAllInvoices());
     }
 
     @Test
-    void invoiceExistsTest() throws DatabaseOperationException, ServiceOperationException {
-        Invoice invoice = createInvoiceNo1();
+    void shouldReturnTrueWhenInvoiceExistsInDatabase() throws DatabaseOperationException, ServiceOperationException {
+        Invoice invoice = createSampleInvoice();
         when(database.exists(invoice.getId())).thenReturn(true);
         assertTrue(invoiceService.invoiceExists(invoice.getId()));
     }
 
     @Test
-    void invoiceExistsThrowErrorTest() throws DatabaseOperationException {
+    void shouldReturnFalseWhenInvoiceDoesNotExistInDatabase() throws DatabaseOperationException, ServiceOperationException {
+        Invoice invoice = createSampleInvoice();
+        when(database.exists(invoice.getId())).thenReturn(false);
+        assertFalse(invoiceService.invoiceExists(invoice.getId()));
+    }
+
+    @Test
+    void invoiceExistsMethodShouldThrowExceptionWhenAnErrorOccurDuringCheckingInvoiceExists() throws DatabaseOperationException {
         Long id = 1L;
         when(database.exists(id)).thenThrow(new DatabaseOperationException());
-        assertThrows(IllegalArgumentException.class, () -> invoiceService.invoiceExists(null));
         assertThrows(ServiceOperationException.class, () -> invoiceService.invoiceExists(id));
+    }
+
+    @Test
+    void invoiceExistsMethodShouldThrowExceptionForNullInvoiceId() {
+        assertThrows(IllegalArgumentException.class, () -> invoiceService.invoiceExists(null));
     }
 
     private Collection<Invoice> createInvoices() {
         Collection<Invoice> invoices = new ArrayList<>();
-        invoices.add(createInvoiceNo1());
+        invoices.add(createSampleInvoice());
         return invoices;
     }
 
-    private Invoice createInvoiceNo1() {
+    private Invoice createSampleInvoice() {
         List<InvoiceEntry> entries = new ArrayList<>();
         entries.add(new InvoiceEntry(1L, "descr", 22L, new BigDecimal("1.25"), new BigDecimal("1.25"), new BigDecimal("1.25"), Vat.VAT_23));
         Company seller = new Company(1L, "TTX", "Radomska", "88", "2222", "9999999999", "sss@o2.pl");
