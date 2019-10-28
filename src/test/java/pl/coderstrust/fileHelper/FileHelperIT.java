@@ -165,6 +165,5 @@ class FileHelperIT {
     FileHelper.writeLine(INPUT_FILE,"SecondLine");
     String expected = "SecondLine";
     assertEquals(expected,FileHelper.readLastLine(INPUT_FILE));
-
     }
 }
