@@ -45,7 +45,7 @@ class InvoiceServiceTest {
     }
 
     @Test
-    void getAllInvoicesThrowsErrorTest() throws DatabaseOperationException {
+    void getAllInvoicesMethodShouldThrowExceptionWhenAnErrorOccurDuringGettingAllInvoicesFromDatabase() throws DatabaseOperationException {
         when(database.getAll()).thenThrow(new DatabaseOperationException());
         assertThrows(ServiceOperationException.class, () -> invoiceService.getAllInvoices());
         verify(database).getAll();
