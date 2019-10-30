@@ -1,10 +1,12 @@
 package pl.coderstrust.fileHelper;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
@@ -45,6 +47,9 @@ public class FileHelper {
         if (filePath == null) {
             throw new IllegalArgumentException("File path cannot be null");
         }
+        if (!Files.exists(Paths.get(filePath))) {
+            throw new NoSuchFileException("File does not exist");
+        }
         Files.delete(Paths.get(filePath));
     }
 
@@ -58,6 +63,9 @@ public class FileHelper {
     static boolean isEmpty(String filePath) throws IOException {
         if (filePath == null) {
             throw new IllegalArgumentException("File path cannot be null");
+        }
+        if (!Files.exists(Paths.get(filePath))) {
+            throw new NoSuchFileException("File does not exist");
         }
         return Files.size(Paths.get(filePath)) == 0L;
     }
@@ -78,8 +86,11 @@ public class FileHelper {
         }
         File file = new File(filePath);
         List<String> lines = FileUtils.readLines(file, ENCODING);
+        if (lineNumber > lines.size()) {
+            throw new IllegalArgumentException("This file cannot remove this line because this line does not exist");
+        }
         lines.remove(lineNumber - 1);
-        FileUtils.writeLines(file, ENCODING.name(), Collections.singleton(lines), false);
+        FileUtils.writeLines(file, ENCODING.name(), lines, false);
     }
 
     static String readLastLine(String filePath) throws IOException {

@@ -1,22 +1,30 @@
 package pl.coderstrust.fileHelper;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FileHelperIT {
 
     private static final String INPUT_FILE = "src/main/resources/input_file.txt";
     private static final String EXPECTED_FILE = "src/main/resources/expected_file.txt";
+    private static final Charset ENCODING = UTF_8;
     private FileHelper fileHelper;
     private File inputFile;
     private File expectedFile;
@@ -41,16 +49,24 @@ class FileHelperIT {
     }
 
     @Test
-    void readLinesFromPathMethodShouldReadLinesFromFile() throws IOException {
-        FileHelper.writeLine(INPUT_FILE, "Something");
+    void shouldReadLinesFromFile() throws IOException {
+        List<String> lines = Arrays.asList(
+                "ID",
+                "22/2019",
+                "2019-06-25",
+                "2019-07-25",
+                "Seller's details",
+                "Buyer's details"
+        );
+        FileUtils.writeLines(new File(INPUT_FILE), ENCODING.name(), lines, true);
+
         List<String> result = FileHelper.readLines(INPUT_FILE);
-        List<String> expected = new ArrayList<String>();
-        expected.add("Something");
-        assertEquals(expected, result);
+
+        assertEquals(lines, result);
     }
 
     @Test
-    void writeLinesFromFilePathMethodShouldThrowExceptionForNullAsFilePath() {
+    void writeLineMethodShouldThrowExceptionForNullAsLine() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> FileHelper.writeLine(null, "SomeLineOfString"));
         assertEquals("File path cannot be null", exception.getMessage());
     }
@@ -61,7 +77,7 @@ class FileHelperIT {
     }
 
     @Test
-    void writeLinesFromFilePathMethodShouldWriteSomeValueInFile() throws IOException {
+    void shouldWriteLineToFile() throws IOException {
         String lineToAdd = "something";
         FileUtils.writeLines(expectedFile, Collections.singleton(lineToAdd), true);
         FileHelper.writeLine(INPUT_FILE, lineToAdd);
@@ -69,101 +85,123 @@ class FileHelperIT {
     }
 
     @Test
-    void isEmptyFromFilePathMethodShouldThrowExceptionForNullAsFilePath() {
+    void isEmptyMethodShouldThrowExceptionForNullAsFilePath() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> FileHelper.isEmpty(null));
         assertEquals("File path cannot be null", exception.getMessage());
     }
 
     @Test
-    void isEmptyFromFilePathMethodShouldReturnFalse() throws IOException {
-        FileHelper.create(INPUT_FILE);
+    void isEmptyMethodShouldThrowExceptionForNonExistingFile() {
+        Exception exception = assertThrows(NoSuchFileException.class, () -> FileHelper.isEmpty(INPUT_FILE));
+        assertEquals("File does not exist", exception.getMessage());
+    }
+
+    @Test
+    void shouldReturnTrueIfFileIsEmpty() throws IOException {
+        FileHelper.create(INPUT_FILE);                      // trzeba pogadac z pawłem
         assertTrue(FileHelper.isEmpty(INPUT_FILE));
     }
 
     @Test
-    void isEmptyFromFilePathMethodShouldReturnTrue() throws IOException {
-        FileHelper.writeLine(INPUT_FILE, "123");
-        FileHelper.clear(INPUT_FILE);
-        assertTrue(FileHelper.isEmpty(INPUT_FILE));
+    void shouldReturnFalseIfFileIsNotEmpty() throws IOException {   // Trzeba pogadać z pawłem
+        FileHelper.writeLine(INPUT_FILE, "Bla bla bla");
+        assertFalse(FileHelper.isEmpty(INPUT_FILE));
     }
 
     @Test
-    void clearFromFilePathMethodShouldTrowExceptionForNullAsFilePath() {
+    void clearMethodShouldTrowExceptionForNullAsFilePath() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> FileHelper.clear(null));
         assertEquals("File path cannot be null", exception.getMessage());
     }
 
     @Test
-    void createFromFilePathMethodShouldThrowExceptionForNUllAsFilePath() {
+    void createMethodShouldThrowExceptionForNullAsFilePath() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> FileHelper.create(null));
         assertEquals("File path cannot be null", exception.getMessage());
     }
 
     @Test
-    void createFromFilePathMethodShouldCreateNewFile() throws IOException {
+    void shouldClearFile() throws IOException {
+        FileHelper.writeLine(INPUT_FILE, "SomeLines");
+        FileHelper.clear(INPUT_FILE);
+        assertTrue(FileHelper.isEmpty(INPUT_FILE));
+    }
+
+    @Test
+    void shouldCreateFile() throws IOException {
         FileHelper.create(INPUT_FILE);
         assertTrue(Files.exists(Paths.get(INPUT_FILE)));
     }
+
     @Test
-    void removeLineFromFilePathMethodShouldThrowExceptionForNullAsFilePath(){
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> FileHelper.removeLine(null,2));
+    void removeLineMethodShouldThrowExceptionForNullAsFilePath() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> FileHelper.removeLine(null, 2));
         assertEquals("File path cannot be null", exception.getMessage());
     }
 
-    @Test
-    void removeLineFromFilePathMethodShouldThrowExceptionForNullAsLineNumber(){
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> FileHelper.removeLine(INPUT_FILE,0));
-        assertEquals("Line number cannot be lower then one", exception.getMessage());
+    @ParameterizedTest
+    @CsvSource(value = {"-1, Line number cannot be lower then one"
+            , "0, Line number cannot be lower then one"
+            , "1, This file cannot remove this line because this line does not exist"})
+    void removeLineShouldThrowExceptionForInvalidLineNumber(int lineNumber, String exceptionMessage) throws IOException {
+        FileHelper.create(INPUT_FILE);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> FileHelper.removeLine(INPUT_FILE, lineNumber));
+        assertEquals(exceptionMessage, exception.getMessage());
     }
 
     @Test
-    void removeLineFromFilePathMethodShouldRemoveLine() throws IOException {
-       FileHelper.writeLine(INPUT_FILE,"This is first line");
-       FileHelper.removeLine(INPUT_FILE,1);
-       assertFalse(FileHelper.isEmpty(INPUT_FILE));
+    void shouldRemoveLineFromFile() throws IOException {
+        FileUtils.writeLines(inputFile, ENCODING.name(), Arrays.asList("bla1", "bla2", "bla3"), true);
+        FileUtils.writeLines(expectedFile, ENCODING.name(), Arrays.asList("bla2", "bla3"), true);
+        FileHelper.removeLine(INPUT_FILE, 1);
+        assertTrue(FileUtils.contentEquals(expectedFile, inputFile));
     }
 
     @Test
-    void existFromFilePathMethodShouldThrowExceptionForNullAsFilePath(){
+    void existMethodShouldThrowExceptionForNullAsFilePath() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> FileHelper.exist(null));
         assertEquals("File path cannot be null", exception.getMessage());
     }
 
     @Test
-    void existFromFilePathMethodShouldReturnFalseWhenFileDoNotExist(){
+    void shouldReturnFalseIfFileDoesNotExist() {
         assertFalse(FileHelper.exist(INPUT_FILE));
     }
 
     @Test
-    void existFromFilePathMethodShouldReturnTrueWhenFileExist() throws IOException {
+    void shouldReturnTrueIfFileExists() throws IOException {
         FileHelper.create(INPUT_FILE);
         assertTrue(FileHelper.exist(INPUT_FILE));
     }
 
     @Test
-    void deleteFromFilePathMethodShouldThrowExceptionForNullAsFilePath(){
+    void deleteMethodShouldThrowExceptionForNullAsFilePath() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> FileHelper.delete(null));
         assertEquals("File path cannot be null", exception.getMessage());
     }
 
     @Test
-    void deleteFromFilePathMethodShouldDeleteFile() throws IOException {
-        FileHelper.create(INPUT_FILE);
+    void shouldDeleteExistingFile() throws IOException {
+        inputFile.createNewFile();
         FileHelper.delete(INPUT_FILE);
         assertFalse(FileHelper.exist(INPUT_FILE));
     }
 
     @Test
-    void readLastLineFromFilePathMethodShouldThrowExceptionForNullAsFilePath(){
+    void readLastLineMethodShouldThrowExceptionForNullAsFilePath() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> FileHelper.readLastLine(null));
         assertEquals("File path cannot be null", exception.getMessage());
     }
 
     @Test
-    void readLastLineFromFilePathMethodShouldReadLastLineFromFile() throws IOException {
-    FileHelper.writeLine(INPUT_FILE,"FirstLine");
-    FileHelper.writeLine(INPUT_FILE,"SecondLine");
-    String expected = "SecondLine";
-    assertEquals(expected,FileHelper.readLastLine(INPUT_FILE));
+    void shouldReadLastLineFromFile() throws IOException {
+        FileUtils.writeLines(inputFile, ENCODING.name(), Arrays.asList("Seller's details", "2019-06-25", "Buyer's details"), false);
+        assertEquals("Buyer's details", FileHelper.readLastLine(INPUT_FILE));
+    }
+
+    @Test
+    void deleteMethodShouldThrowExceptionForNonExistingFile() {
+        Exception exception = assertThrows(NoSuchFileException.class, () -> FileHelper.delete(INPUT_FILE));
+        assertEquals("File does not exist", exception.getMessage());
     }
 }
