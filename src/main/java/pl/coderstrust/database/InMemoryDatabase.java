@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
-import pl.coderstrust.model.Invoice;
 
 public class InMemoryDatabase implements Database {
 
@@ -20,7 +19,7 @@ public class InMemoryDatabase implements Database {
         if (invoice == null) {
             throw new IllegalArgumentException("Invoice cannot be null");
         }
-        if (invoice.getId() != null || storage.containsKey(invoice.getId())) {
+        if (invoice.getId() != null && storage.containsKey(invoice.getId())) {
             return update(invoice);
         }
         return add(invoice);
