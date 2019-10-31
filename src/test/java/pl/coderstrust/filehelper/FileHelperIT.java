@@ -1,4 +1,10 @@
-package pl.coderstrust.fileHelper;
+package pl.coderstrust.filehelper;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,9 +20,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.jupiter.api.Assertions.*;
 
 class FileHelperIT {
 
@@ -152,9 +155,9 @@ class FileHelperIT {
     }
 
     @ParameterizedTest
-    @CsvSource(value = {"-1, Line number cannot be lower then one"
-            , "0, Line number cannot be lower then one"
-            , "1, Line number cannot be greater than number of lines in file"})
+    @CsvSource(value = {"-1 , Line number cannot be lower then one",
+            "0 , Line number cannot be lower then one",
+            "1, Line number cannot be greater than number of lines in file"})
     void removeLineShouldThrowExceptionForInvalidLineNumber(int lineNumber, String exceptionMessage) throws IOException {
         FileHelper.create(INPUT_FILE);
 

@@ -1,9 +1,10 @@
-package pl.coderstrust.fileHelper;
+package pl.coderstrust.filehelper;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
@@ -11,8 +12,6 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.ReversedLinesFileReader;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class FileHelper {
 
@@ -96,7 +95,7 @@ public class FileHelper {
         if (filePath == null) {
             throw new IllegalArgumentException("File path cannot be null");
         }
-        try (ReversedLinesFileReader reader = new ReversedLinesFileReader(new File(filePath), StandardCharsets.UTF_8)) {
+        try (ReversedLinesFileReader reader = new ReversedLinesFileReader(new File(filePath), UTF_8)) {
             return reader.readLine();
         }
     }
