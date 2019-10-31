@@ -86,7 +86,7 @@ public class FileHelper {
         File file = new File(filePath);
         List<String> lines = FileUtils.readLines(file, ENCODING);
         if (lineNumber > lines.size()) {
-            throw new IllegalArgumentException("This file cannot remove this line because this line does not exist");
+            throw new IllegalArgumentException("Line number cannot be greater than number of lines in file");
         }
         lines.remove(lineNumber - 1);
         FileUtils.writeLines(file, ENCODING.name(), lines, false);

@@ -41,7 +41,7 @@ class FileHelperIT {
     }
 
     @Test
-    void readLinesFromPathMethodShouldThrowExceptionForNullAsFilePath() {
+    void readLinesMethodShouldThrowExceptionForNullAsFilePath() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> FileHelper.readLines(null));
 
         assertEquals("File path cannot be null", exception.getMessage());
@@ -65,14 +65,14 @@ class FileHelperIT {
     }
 
     @Test
-    void writeLineMethodShouldThrowExceptionForNullAsLine() {
+    void writeLineMethodShouldThrowExceptionForNullAsFilePath() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> FileHelper.writeLine(null, "SomeLineOfString"));
 
         assertEquals("File path cannot be null", exception.getMessage());
     }
 
     @Test
-    void writeLinesFromFilePathMethodShouldThrowExceptionForNullAsStringLine() {
+    void writeLineMethodShouldThrowExceptionForNullAsLine() {
         assertThrows(IllegalArgumentException.class, () -> FileHelper.writeLine(INPUT_FILE, null));
     }
 
@@ -154,7 +154,7 @@ class FileHelperIT {
     @ParameterizedTest
     @CsvSource(value = {"-1, Line number cannot be lower then one"
             , "0, Line number cannot be lower then one"
-            , "1, This file cannot remove this line because this line does not exist"})
+            , "1, Line number cannot be greater than number of lines in file"})
     void removeLineShouldThrowExceptionForInvalidLineNumber(int lineNumber, String exceptionMessage) throws IOException {
         FileHelper.create(INPUT_FILE);
 
@@ -200,6 +200,13 @@ class FileHelperIT {
     }
 
     @Test
+    void deleteMethodShouldThrowExceptionForNonExistingFile() {
+        Exception exception = assertThrows(NoSuchFileException.class, () -> FileHelper.delete(INPUT_FILE));
+
+        assertEquals("File does not exist", exception.getMessage());
+    }
+
+    @Test
     void shouldDeleteExistingFile() throws IOException {
         inputFile.createNewFile();
 
@@ -220,12 +227,5 @@ class FileHelperIT {
         FileUtils.writeLines(inputFile, ENCODING.name(), Arrays.asList("Seller's details", "2019-06-25", "Buyer's details"), false);
 
         assertEquals("Buyer's details", FileHelper.readLastLine(INPUT_FILE));
-    }
-
-    @Test
-    void deleteMethodShouldThrowExceptionForNonExistingFile() {
-        Exception exception = assertThrows(NoSuchFileException.class, () -> FileHelper.delete(INPUT_FILE));
-
-        assertEquals("File does not exist", exception.getMessage());
     }
 }
