@@ -1,4 +1,4 @@
-package pl.coderstrust.filehelper;
+package pl.coderstrust.helpers;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
