@@ -19,6 +19,14 @@ public class InvoiceGenerator {
         return generateInvoice(null);
     }
 
+    public static List<Invoice> generateRandomInvoices(int count) {
+        List<Invoice> invoices = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            invoices.add(generateRandomInvoice());
+        }
+        return invoices;
+    }
+
     private static Invoice generateInvoice(Long id) {
         return Invoice.builder()
             .withId(id)
