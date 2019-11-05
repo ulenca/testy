@@ -2,17 +2,9 @@ package pl.coderstrust.database;
 
 import java.util.Collection;
 import java.util.Optional;
-import javax.persistence.Entity;
 import pl.coderstrust.model.Invoice;
 
-@Entity
 public class HibernateDatabase implements Database {
-
-    private Invoice invoice;
-
-    public HibernateDatabase(Invoice invoice) {
-        this.invoice = invoice;
-    }
 
     @Override
     public Invoice save(Invoice invoice) throws DatabaseOperationException {
