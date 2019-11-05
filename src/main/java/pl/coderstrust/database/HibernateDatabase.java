@@ -4,8 +4,9 @@ import java.util.Collection;
 import java.util.Optional;
 import javax.persistence.Entity;
 import pl.coderstrust.model.Invoice;
+
 @Entity
-public class HibernateDatabase  implements Database {
+public class HibernateDatabase implements Database {
 
     private Invoice invoice;
 
