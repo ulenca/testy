@@ -2,21 +2,19 @@ package pl.coderstrust.database;
 
 import static java.util.Comparator.comparing;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static pl.coderstrust.generators.InvoiceGenerator.generateRandomInvoice;
-import static pl.coderstrust.generators.InvoiceGenerator.generateRandomInvoiceWithNullId;
 import static pl.coderstrust.generators.InvoiceGenerator.generateRandomInvoices;
 import static pl.coderstrust.generators.InvoiceGenerator.getRandomInvoiceWithSpecificId;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.coderstrust.model.Invoice;
@@ -45,8 +43,6 @@ public class InMemoryDatabaseTest {
         assertEquals(expectedInvoice, addedInvoice);
         assertEquals(addedInvoice, storage.get(addedInvoice.getId()));
     }
-
-    // shouldAddInvoiceWithNullId()
 
     @Test
     void shouldAddMultipleInvoices() throws DatabaseOperationException {
@@ -87,19 +83,15 @@ public class InMemoryDatabaseTest {
     }
 
     @Test
-    public void saveMethodShouldThrowExceptionForNullInvoice() throws IOException {
-        Invoice invoice = null;
-
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> database.save(invoice));
+    public void saveMethodShouldThrowExceptionForNullInvoice() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> database.save(null));
 
         assertEquals("Invoice cannot be null", exception.getMessage());
     }
 
     @Test
     void getByIdMethodShouldThrowExceptionForNullId() {
-        Invoice invoice = generateRandomInvoiceWithNullId();
-
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> database.getById(invoice.getId()));
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> database.getById(null));
 
         assertEquals("Id cannot be null", exception.getMessage());
     }
@@ -119,32 +111,27 @@ public class InMemoryDatabaseTest {
 
     @Test
     void shouldThrowExceptionForNullNumber() {
-        Invoice invoice = Invoice.builder()
-            .withNumber(null)
-            .build();
-
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> database.getByNumber(invoice.getNumber()));
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> database.getByNumber(null));
 
         assertEquals("Number cannot be null", exception.getMessage());
     }
 
     @Test
     void shouldGetInvoiceByNumber() throws DatabaseOperationException {
-        Invoice invoice1 = generateRandomInvoice();
+        List<Invoice> invoicesInDatabase = generateRandomInvoices(3);
+        for (Invoice invoice : invoicesInDatabase) {
+            storage.put(invoice.getId(), invoice);
+        }
 
-        //when
-        Optional<Invoice> invoiceInDatabase = Optional.ofNullable(database.save(invoice1));
+        Optional<Invoice> invoice = database.getByNumber(invoicesInDatabase.get(1).getNumber());
 
-        assertEquals(invoiceInDatabase, storage.values()
-            .stream()
-            .filter(invoice -> invoice.getNumber().equals(invoice.getNumber()))
-            .findFirst());
+        assertTrue(invoice.isPresent());
+        assertEquals(invoicesInDatabase.get(1), invoice.get());
     }
 
     @Test
     void shouldGetAllInvoices() throws DatabaseOperationException {
         List<Invoice> invoicesInDatabase = generateRandomInvoices(3);
-
 
         for (Invoice invoice : invoicesInDatabase) {
             storage.put(invoice.getId(), invoice);
@@ -155,18 +142,16 @@ public class InMemoryDatabaseTest {
 
     @Test
     void deleteMethodShouldThrowExceptionForNullId() {
-        Invoice invoice = generateRandomInvoiceWithNullId();
-
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> database.delete(invoice.getId()));
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> database.delete(null));
 
         assertEquals("Id cannot be null", exception.getMessage());
     }
 
     @Test
-    void deleteMethodShouldThrowExceptionForNoSuchId() throws IOException, DatabaseOperationException {
+    void deleteMethodShouldThrowExceptionForNoSuchId() {
         Invoice invoice = getRandomInvoiceWithSpecificId(1L);
+        storage.put(invoice.getId(), invoice);
 
-        database.save(invoice);
         Exception exception = assertThrows(DatabaseOperationException.class, () -> database.delete(3L));
 
         assertEquals("There is no invoice with such id", exception.getMessage());
@@ -179,9 +164,10 @@ public class InMemoryDatabaseTest {
             storage.put(invoice.getId(), invoice);
         }
 
-        // delete
+        Long id = invoicesInDatabase.get(1).getId();
+        database.delete(id);
 
-        //assertFalse(storage.containsKey(invoicesInDatabase.getId()));
+        assertFalse(storage.containsKey(id));
     }
 
     @Test
@@ -197,23 +183,26 @@ public class InMemoryDatabaseTest {
     }
 
     @Test
-    void existsMethodShouldThrowExceptionForNullId() throws IOException {
-        Invoice invoice = Invoice.builder()
-            .withId(null)
-            .build();
-
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> database.exists(invoice.getId()));
+    void existsMethodShouldThrowExceptionForNullId() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> database.exists(null));
 
         assertEquals("Id cannot be null", exception.getMessage());
     }
 
     @Test
-    void shouldCheckIfInvoiceExists() throws DatabaseOperationException {
+    void shouldReturnTrueIfInvoiceExists() throws DatabaseOperationException {
         Invoice invoiceInDatabase = generateRandomInvoice();
+        storage.put(invoiceInDatabase.getId(), invoiceInDatabase);
 
-        Invoice invoice = database.save(invoiceInDatabase);
+        assertTrue(database.exists(invoiceInDatabase.getId()));
+    }
 
-        assertTrue(storage.containsKey(invoice.getId()));
+    @Test
+    void shouldReturnFalseIfInvoiceExists() throws DatabaseOperationException {
+        Invoice invoiceInDatabase = generateRandomInvoice();
+        storage.put(invoiceInDatabase.getId(), invoiceInDatabase);
+
+        assertFalse(database.exists(invoiceInDatabase.getId() + 1L));
     }
 
     @Test
@@ -221,20 +210,9 @@ public class InMemoryDatabaseTest {
         List<Invoice> invoicesInDatabase = generateRandomInvoices(3);
 
         for (Invoice invoice : invoicesInDatabase) {
-            database.save(invoice);
+            storage.put(invoice.getId(), invoice);
         }
 
-        Assertions.assertEquals(3, storage.size());
-    }
-
-    @Test
-    void shouldCountZeroInvoices() throws DatabaseOperationException {
-        List<Invoice> invoicesInDatabase = generateRandomInvoices(0);
-
-        for (Invoice invoice : invoicesInDatabase) {
-            database.save(invoice);
-        }
-
-        Assertions.assertEquals(0, storage.size());
+        assertEquals(invoicesInDatabase.size(), database.count());
     }
 }
