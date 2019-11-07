@@ -15,7 +15,7 @@
     </parent>
 
     <properties>
-        <junit.jupiter.version>5.5.2</junit.jupiter.version>
+        <junit.jupiter.version>5.3.2</junit.jupiter.version>
         <mockito.version>2.28.2</mockito.version>
         <java.version>11</java.version>
     </properties>
@@ -51,18 +51,18 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <release>11</release>
+                    <release>${java.version}</release>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.0</version>
+                <version>2.22.2</version>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.5</version>
+                <version>0.8.4</version>
                 <configuration>
                     <excludes>
                         <exclude>/pl/coderstrust/model/*.class</exclude>
