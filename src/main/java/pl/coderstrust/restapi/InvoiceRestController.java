@@ -2,6 +2,7 @@ package pl.coderstrust.restapi;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import pl.coderstrust.services.InvoiceService;
 public class InvoiceRestController {
 
     private InvoiceService invoiceService;
+
     public InvoiceRestController(InvoiceService invoiceService) {
         this.invoiceService = invoiceService;
     }
@@ -28,26 +30,22 @@ public class InvoiceRestController {
         if (invoice == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        if(invoice.getId() != null) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
         try {
-            invoiceService.addInvoice(invoice);
-            return ResponseEntity.ok().build();
+            if(invoice.getId() != null && invoiceService.invoiceExists(invoice.getId())) {
+                return new ResponseEntity<>(HttpStatus.CONFLICT);
+            }
+            return new ResponseEntity<>(invoiceService.addInvoice(invoice), HttpStatus.CREATED);
         } catch (ServiceOperationException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @GetMapping("/invoices")
-    public Collection<Invoice> getAll() {
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getAll() {
         try {
-            return invoiceService.getAllInvoices();
+            return new ResponseEntity<>(invoiceService.getAllInvoices(), HttpStatus.OK);
         } catch (ServiceOperationException e) {
-            e.printStackTrace();
-            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            return new ArrayList<>();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
