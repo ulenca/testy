@@ -270,5 +270,4 @@ class InvoiceServiceTest {
         assertThrows(IllegalArgumentException.class, () -> invoiceService.invoiceExists(null));
         verify(database, never()).exists(anyLong());
     }
-
 }
