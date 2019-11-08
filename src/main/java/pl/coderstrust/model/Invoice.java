@@ -47,9 +47,9 @@ public final class Invoice {
         return dueDate;
     }
 
-    public Company getSeller() {
-        return seller;
-    }
+    public Company getSeller() { return seller; }
+
+    public Company getBuyer() { return buyer; }
 
     public List<InvoiceEntry> getEntries() {
         return entries == null ? new ArrayList<>() : new ArrayList(entries);

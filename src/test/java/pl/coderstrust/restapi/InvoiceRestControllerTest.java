@@ -55,7 +55,7 @@ public class InvoiceRestControllerTest {
                 .perform(get("/invoices"))
                 .andDo(print())
                 .andExpect(status().isOk());
-   //             .andExpect(jsonPath("$"), hasSize(0));
+        //             .andExpect(jsonPath("$"), hasSize(0));
     }
 
     @Test
@@ -73,8 +73,6 @@ public class InvoiceRestControllerTest {
 
         verify(invoiceService).addInvoice(invoiceToAdd);
         verify(invoiceService).invoiceExists(invoiceToAdd.getId());
-
-
     }
 
     private String toJson(Invoice invoice) throws JsonProcessingException {
