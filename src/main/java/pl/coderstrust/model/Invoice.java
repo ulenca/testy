@@ -1,12 +1,13 @@
 package pl.coderstrust.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Invoice {
-
+@JsonDeserialize(builder = Invoice.InvoiceBuilder.class)
+public final class Invoice {
 
     private final Long id;
     private final String number;

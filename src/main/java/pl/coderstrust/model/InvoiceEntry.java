@@ -1,8 +1,10 @@
 package pl.coderstrust.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+@JsonDeserialize(builder = InvoiceEntry.InvoiceEntryBuilder.class)
 public final class InvoiceEntry {
 
     private final Long id;

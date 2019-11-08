@@ -1,7 +1,9 @@
 package pl.coderstrust.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.Objects;
 
+@JsonDeserialize(builder = Company.CompanyBuilder.class)
 public final class Company {
 
     private final Long id;
