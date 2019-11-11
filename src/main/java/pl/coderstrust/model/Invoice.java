@@ -5,8 +5,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.Entity;
 
 @JsonDeserialize(builder = Invoice.InvoiceBuilder.class)
+@Entity
 public final class Invoice {
 
     private final Long id;
@@ -154,5 +156,4 @@ public final class Invoice {
             return new Invoice(this);
         }
     }
-
 }
