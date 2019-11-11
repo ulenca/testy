@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static pl.coderstrust.generators.InvoiceGenerator.generateRandomInvoice;
+import static pl.coderstrust.generators.InvoiceGenerator.generateRandomInvoiceWithNullId;
 import static pl.coderstrust.generators.InvoiceGenerator.generateRandomInvoices;
 import static pl.coderstrust.generators.InvoiceGenerator.getRandomInvoiceWithSpecificId;
 
@@ -60,6 +61,20 @@ public class InMemoryDatabaseTest {
         assertEquals(addedInvoices, storage.values().stream().sorted(comparing(Invoice::getId)).collect(Collectors.toList()));
     }
 
+    @Test
+    void shouldAddInvoiceWithNullId() throws DatabaseOperationException {
+        Invoice invoiceToAdd = generateRandomInvoiceWithNullId();
+        Invoice expectedInvoice = Invoice.builder()
+            .withInvoice(invoiceToAdd)
+            .withId(1L)
+            .build();
+
+        Invoice addedInvoice = database.save(invoiceToAdd);
+
+        assertEquals(expectedInvoice, addedInvoice);
+        assertEquals(addedInvoice, storage.get(addedInvoice.getId()));
+    }
+
     private Invoice changeInvoiceId(Invoice invoice, Long id) {
         return Invoice.builder()
             .withInvoice(invoice)
@@ -110,7 +125,7 @@ public class InMemoryDatabaseTest {
     }
 
     @Test
-    void shouldThrowExceptionForNullNumber() {
+    void getByNumberMethodShouldThrowExceptionForNullNumber() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> database.getByNumber(null));
 
         assertEquals("Number cannot be null", exception.getMessage());
@@ -148,7 +163,7 @@ public class InMemoryDatabaseTest {
     }
 
     @Test
-    void deleteMethodShouldThrowExceptionForNoSuchId() {
+    void deleteMethodShouldThrowExceptionWhenInvoiceDoesNotExist() {
         Invoice invoice = getRandomInvoiceWithSpecificId(1L);
         storage.put(invoice.getId(), invoice);
 
