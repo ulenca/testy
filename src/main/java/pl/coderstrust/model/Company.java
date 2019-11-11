@@ -2,8 +2,10 @@ package pl.coderstrust.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.Objects;
+import javax.persistence.Entity;
 
 @JsonDeserialize(builder = Company.CompanyBuilder.class)
+@Entity
 public final class Company {
 
     private final Long id;

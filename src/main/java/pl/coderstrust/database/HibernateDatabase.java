@@ -32,7 +32,7 @@ public class HibernateDatabase implements Database {
         }
         try {
             return repository.findById(id);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             throw new DatabaseOperationException();
         }
     }
@@ -55,16 +55,15 @@ public class HibernateDatabase implements Database {
     @Override
     public Collection<Invoice> getAll() throws DatabaseOperationException {
         try {
-            repository.findAll();
-        } catch (Exception e) {
+            return repository.findAll();
+        } catch (RuntimeException e) {
             throw new DatabaseOperationException();
         }
-        return null;
     }
 
     @Override
     public void delete(Long id) throws DatabaseOperationException {
-        if (id < 0) {
+        if (id == null) {
             throw new IllegalArgumentException("Id cannot be lower then one");
         }
         try {
@@ -73,8 +72,8 @@ public class HibernateDatabase implements Database {
             } else {
                 throw new DatabaseOperationException("Invoice does not exist");
             }
-        } catch (Exception e) {
-            throw new DatabaseOperationException();
+        } catch (RuntimeException e) {
+            throw new DatabaseOperationException("Failed to delete invoice");
         }
     }
 
@@ -82,7 +81,7 @@ public class HibernateDatabase implements Database {
     public void deleteAll() throws DatabaseOperationException {
         try {
             repository.deleteAll();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             throw new DatabaseOperationException();
         }
     }
@@ -94,7 +93,7 @@ public class HibernateDatabase implements Database {
         }
         try {
             return repository.existsById(id);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             throw new DatabaseOperationException();
         }
     }
@@ -103,7 +102,7 @@ public class HibernateDatabase implements Database {
     public long count() throws DatabaseOperationException {
         try {
             return repository.count();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             throw new DatabaseOperationException();
         }
     }

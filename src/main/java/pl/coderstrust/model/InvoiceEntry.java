@@ -3,8 +3,10 @@ package pl.coderstrust.model;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.math.BigDecimal;
 import java.util.Objects;
+import javax.persistence.Entity;
 
 @JsonDeserialize(builder = InvoiceEntry.InvoiceEntryBuilder.class)
+@Entity
 public final class InvoiceEntry {
 
     private final Long id;
