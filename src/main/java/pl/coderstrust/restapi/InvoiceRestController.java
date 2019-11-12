@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.coderstrust.model.Invoice;
 import pl.coderstrust.services.InvoiceService;
@@ -28,7 +29,7 @@ public class InvoiceRestController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         try {
-            if(invoice.getId() != null && invoiceService.invoiceExists(invoice.getId())) {
+            if (invoice.getId() != null && invoiceService.invoiceExists(invoice.getId())) {
                 return new ResponseEntity<>(HttpStatus.CONFLICT);
             }
             return new ResponseEntity<>(invoiceService.addInvoice(invoice), HttpStatus.CREATED);
@@ -45,4 +46,15 @@ public class InvoiceRestController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getById(@RequestParam(required = true) Long id) {
+        try {
+            return new ResponseEntity<>(invoiceService.getById(id), HttpStatus.OK);
+        } catch (ServiceOperationException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 }
