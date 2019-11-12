@@ -54,8 +54,9 @@ public final class Invoice {
     public Company getBuyer() {
         return buyer;
     }
+
     public List<InvoiceEntry> getEntries() {
-        return entries == null ? new ArrayList<>() : new ArrayList(entries);
+        return entries == null ? new ArrayList<>() : new ArrayList<>(entries);
     }
 
     @Override
