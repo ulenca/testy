@@ -3,11 +3,16 @@ package pl.coderstrust.model;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.Objects;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import org.springframework.data.annotation.Id;
 
 @JsonDeserialize(builder = Company.CompanyBuilder.class)
 @Entity
 public final class Company {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private final Long id;
     private final String name;
     private final String address;

@@ -4,11 +4,14 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 
 @JsonDeserialize(builder = InvoiceEntry.InvoiceEntryBuilder.class)
 @Entity
 public final class InvoiceEntry {
 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private final Long id;
     private final String description;
     private final long quantity;

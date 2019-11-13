@@ -5,19 +5,35 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import org.springframework.data.annotation.Id;
 
 @JsonDeserialize(builder = Invoice.InvoiceBuilder.class)
 @Entity
+
 public final class Invoice {
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    private final Company seller;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    private final Company buyer;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private final List<InvoiceEntry> entries;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private final Long id;
     private final String number;
     private final LocalDate issuedDate;
     private final LocalDate dueDate;
-    private final Company seller;
-    private final Company buyer;
-    private final List<InvoiceEntry> entries;
 
     private Invoice(Invoice.InvoiceBuilder builder) {
         id = builder.id;
