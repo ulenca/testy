@@ -1,7 +1,8 @@
-package pl.coderstrust.restapi;
+package pl.coderstrust.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -35,10 +36,10 @@ import pl.coderstrust.services.ServiceOperationException;
 @ExtendWith(SpringExtension.class)
 @WebMvcTest
 @AutoConfigureMockMvc
-public class InvoiceRestControllerTest {
+public class InvoiceControllerTest {
 
     @Autowired
-    private InvoiceRestController invoiceController;
+    private InvoiceController invoiceController;
 
     @Autowired
     private MockMvc mockMvc;
@@ -126,16 +127,12 @@ public class InvoiceRestControllerTest {
         verify(invoiceService).addInvoice(any());
     }
 
-    private String toJson(Invoice invoice) throws JsonProcessingException {
-        return objectMapper.writeValueAsString(invoice);
-    }
-
     @Test
     public void getByIdMethodShouldReturnInvoice() throws Exception {
         Invoice invoiceToReturn = InvoiceGenerator.generateRandomInvoice();
         doReturn(Optional.of(invoiceToReturn)).when(invoiceService).getById(invoiceToReturn.getId());
 
-        mockMvc.perform(get("/invoices?id=" + invoiceToReturn.getId()))
+        mockMvc.perform(get("/invoices/" + invoiceToReturn.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(invoiceToReturn)));
 
@@ -144,7 +141,7 @@ public class InvoiceRestControllerTest {
 
     @Test
     public void getByIdMethodReturnsBedRequestWhenIdIsNull() throws Exception {
-        mockMvc.perform(get("/invoices?id=" + null))
+        mockMvc.perform(get("/invoices/" + null))
                 .andExpect(status().isBadRequest());
     }
 
@@ -152,8 +149,18 @@ public class InvoiceRestControllerTest {
     public void getByIdMethodReturnsInternalServerErrorWhenInvoiceServiceThrowsException() throws Exception {
         doThrow(new ServiceOperationException()).when(invoiceService).getById(anyLong());
 
-        mockMvc.perform(get("/invoices?id=" + anyLong()))
+        mockMvc.perform(get("/invoices/" + anyLong()))
                 .andExpect(status().isInternalServerError());
+
+        verify(invoiceService).getById(anyLong());
+    }
+
+    @Test
+    public void getByIdMethodShouldReturnBadRequestWhenInvoiceIsNotPresent() throws Exception {
+        doReturn(Optional.empty()).when(invoiceService).getById(anyLong());
+
+        mockMvc.perform(get("/invoices/" + anyLong()))
+                .andExpect(status().isNotFound());
 
         verify(invoiceService).getById(anyLong());
     }
@@ -163,28 +170,39 @@ public class InvoiceRestControllerTest {
         Invoice invoiceToReturn = InvoiceGenerator.generateRandomInvoice();
         doReturn(Optional.of(invoiceToReturn)).when(invoiceService).getByNumber(invoiceToReturn.getNumber());
 
-        mockMvc.perform(get("/invoices?number=" + invoiceToReturn.getNumber()))
+        mockMvc.perform(get("/invoices/byNumber?number=" + invoiceToReturn.getNumber()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(invoiceToReturn)));
 
         verify(invoiceService).getByNumber(invoiceToReturn.getNumber());
     }
-
-    @Test
-    public void getByNumberMethodReturnsBedRequestWhenNumberIsNull() throws Exception {
-        mockMvc.perform(get("/invoices?number="))
-                .andExpect(status().isBadRequest());
-    }
+    /*
+        @Test
+        public void getByNumberMethodReturnsBedRequestWhenNumberIsNull() throws Exception {
+            mockMvc.perform(get("/invoices/byNumber?number="))
+                    .andExpect(status().isBadRequest());
+        }
+    */
 
     @Test
     public void getByNumberMethodReturnsInternalServerErrorWhenInvoiceServiceThrowsException() throws Exception {
         Invoice invoice = InvoiceGenerator.generateRandomInvoice();
         doThrow(new ServiceOperationException()).when(invoiceService).getByNumber(invoice.getNumber());
 
-        mockMvc.perform(get("/invoices?number=" + invoice.getNumber()))
+        mockMvc.perform(get("/invoices/byNumber?number=" + invoice.getNumber()))
                 .andExpect(status().isInternalServerError());
 
         verify(invoiceService).getByNumber(invoice.getNumber());
+    }
+
+    @Test
+    public void getByNumberMethodShouldReturnBadRequestWhenInvoiceIsNotPresent() throws Exception {
+        doReturn(Optional.empty()).when(invoiceService).getByNumber(anyString());
+
+        mockMvc.perform(get("/invoices/byNumber?number=" + anyString()))
+                .andExpect(status().isNotFound());
+
+        verify(invoiceService).getByNumber(anyString());
     }
 
     @Test
@@ -195,10 +213,10 @@ public class InvoiceRestControllerTest {
         doReturn(updatedInvoice).when(invoiceService).updateInvoice(invoiceToUpdate);
 
         mockMvc.perform(
-                put("/invoices")
+                put("/invoices/" + invoiceToUpdate.getId())
                         .content(toJson(invoiceToUpdate))
                         .contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(content().json(toJson(updatedInvoice)))
                 .andReturn();
 
@@ -209,34 +227,47 @@ public class InvoiceRestControllerTest {
     @Test
     public void updateMethodReturnsBadRequestWhenInvoiceToAddIsNull() throws Exception {
         mockMvc.perform(
-                post("/invoices")
+                put("/invoices/" + 5L)
                         .content("")
                         .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    public void updateMethodReturnsConflictWhenInvoiceDoesNotExist() throws Exception {
+    public void updateMethodReturnsBadRequestWhenPathVariableIsDifferentFromInvoiceId() throws Exception {
+        Invoice invoice = InvoiceGenerator.generateRandomInvoice();
+        Long id = invoice.getId() + 1;
+
+        mockMvc.perform(
+                put("/invoices/" + id)
+                        .content(toJson(invoice))
+                        .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void updateMethodReturnsNotFoundWhenInvoiceDoesNotExist() throws Exception {
         Invoice invoiceToUpdate = InvoiceGenerator.generateRandomInvoice();
         doReturn(false).when(invoiceService).invoiceExists(invoiceToUpdate.getId());
 
         mockMvc.perform(
-                put("/invoices")
+                put("/invoices/" + invoiceToUpdate.getId())
                         .content(toJson(invoiceToUpdate))
                         .contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isConflict());
+                .andExpect(status().isNotFound());
 
         verify(invoiceService).invoiceExists(invoiceToUpdate.getId());
     }
 
     @Test
     public void updateMethodReturnsInternalServerErrorWhenInvoiceServiceThrowsException() throws Exception {
-        doReturn(true).when(invoiceService).invoiceExists(anyLong());
-        doThrow(new ServiceOperationException()).when(invoiceService).updateInvoice(any());
+        Invoice invoice = InvoiceGenerator.generateRandomInvoice();
+        doReturn(true).when(invoiceService).invoiceExists(invoice.getId());
+        doThrow(new ServiceOperationException()).when(invoiceService).updateInvoice(invoice);
 
         mockMvc.perform(
-                put("/invoices")
-                        .content(toJson(InvoiceGenerator.generateRandomInvoice()))
+                put("/invoices/" + invoice.getId())
+                        .content(toJson(invoice))
                         .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isInternalServerError());
 
@@ -251,28 +282,21 @@ public class InvoiceRestControllerTest {
         doNothing().when(invoiceService).deleteInvoiceById(invoice.getId());
 
         mockMvc.perform(
-                delete("/invoices?id=" + invoice.getId()))
-                .andExpect(status().isOk());
+                delete("/invoices/" + invoice.getId()))
+                .andExpect(status().isNoContent());
 
         verify(invoiceService).invoiceExists(invoice.getId());
         verify(invoiceService).deleteInvoiceById(invoice.getId());
     }
 
     @Test
-    public void deleteByIdShouldReturnBadRequestWhenIdIsNull() throws Exception {
-        mockMvc.perform(
-                delete("/invoices?id=" + null))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void deleteByIdShouldReturnConflictWhenInvoiceDoesNotExist() throws Exception {
+    public void deleteByIdShouldReturnNotFoundWhenInvoiceDoesNotExist() throws Exception {
         Invoice invoice = InvoiceGenerator.generateRandomInvoice();
         doReturn(false).when(invoiceService).invoiceExists(invoice.getId());
 
         mockMvc.perform(
-                delete("/invoices?id=" + invoice.getId()))
-                .andExpect(status().isConflict());
+                delete("/invoices/" + invoice.getId()))
+                .andExpect(status().isNotFound());
 
         verify(invoiceService).invoiceExists(invoice.getId());
     }
@@ -284,7 +308,7 @@ public class InvoiceRestControllerTest {
         doReturn(true).when(invoiceService).invoiceExists(invoice.getId());
 
         mockMvc.perform(
-                delete("/invoices?id=" + invoice.getId()))
+                delete("/invoices/" + invoice.getId()))
                 .andExpect(status().isInternalServerError());
 
         verify(invoiceService).deleteInvoiceById(invoice.getId());
@@ -296,7 +320,7 @@ public class InvoiceRestControllerTest {
 
         mockMvc.perform(
                 delete("/invoices"))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         verify(invoiceService).deleteAllInvoices();
     }
@@ -312,4 +336,7 @@ public class InvoiceRestControllerTest {
         verify(invoiceService).deleteAllInvoices();
     }
 
+    private String toJson(Invoice invoice) throws JsonProcessingException {
+        return objectMapper.writeValueAsString(invoice);
+    }
 }
