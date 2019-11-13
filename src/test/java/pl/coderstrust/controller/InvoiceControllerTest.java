@@ -176,13 +176,13 @@ public class InvoiceControllerTest {
 
         verify(invoiceService).getByNumber(invoiceToReturn.getNumber());
     }
-    /*
-        @Test
-        public void getByNumberMethodReturnsBedRequestWhenNumberIsNull() throws Exception {
-            mockMvc.perform(get("/invoices/byNumber?number="))
-                    .andExpect(status().isBadRequest());
-        }
-    */
+
+    @Test
+    public void getByNumberMethodReturnsBedRequestWhenNumberIsNull() throws Exception {
+        mockMvc.perform(get("/invoices/byNumber"))
+                .andExpect(status().isBadRequest());
+    }
+
 
     @Test
     public void getByNumberMethodReturnsInternalServerErrorWhenInvoiceServiceThrowsException() throws Exception {
