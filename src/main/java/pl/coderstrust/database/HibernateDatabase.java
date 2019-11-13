@@ -21,7 +21,7 @@ public class HibernateDatabase implements Database {
         try {
             return repository.save(invoice);
         } catch (Exception e) {
-            throw new DatabaseOperationException();
+            throw new DatabaseOperationException("An error occurred during saving invoice.", e);
         }
     }
 
@@ -32,8 +32,8 @@ public class HibernateDatabase implements Database {
         }
         try {
             return repository.findById(id);
-        } catch (RuntimeException e) {
-            throw new DatabaseOperationException();
+        } catch (Exception e) {
+            throw new DatabaseOperationException("An error occurred during getting invoice by id.", e);
         }
     }
 
@@ -48,7 +48,7 @@ public class HibernateDatabase implements Database {
                     .build());
             return repository.findOne(invoiceExample);
         } catch (Exception e) {
-            throw new DatabaseOperationException();
+            throw new DatabaseOperationException("An error occurred during getting invoice by number.", e);
         }
     }
 
@@ -56,8 +56,8 @@ public class HibernateDatabase implements Database {
     public Collection<Invoice> getAll() throws DatabaseOperationException {
         try {
             return repository.findAll();
-        } catch (RuntimeException e) {
-            throw new DatabaseOperationException();
+        } catch (Exception e) {
+            throw new DatabaseOperationException("An error occurred during getting all invoices.", e);
         }
     }
 
@@ -69,11 +69,11 @@ public class HibernateDatabase implements Database {
         try {
             if (repository.existsById(id)) {
                 repository.deleteById(id);
-            } else {
+            }else {
                 throw new DatabaseOperationException("Invoice does not exist");
             }
-        } catch (RuntimeException e) {
-            throw new DatabaseOperationException("Failed to delete invoice");
+        } catch (Exception e) {
+            throw new DatabaseOperationException("An error occurred during deleting invoice.", e);
         }
     }
 
@@ -81,8 +81,8 @@ public class HibernateDatabase implements Database {
     public void deleteAll() throws DatabaseOperationException {
         try {
             repository.deleteAll();
-        } catch (RuntimeException e) {
-            throw new DatabaseOperationException();
+        } catch (Exception e) {
+            throw new DatabaseOperationException("An error occurred during deleting all invoices.", e);
         }
     }
 
@@ -93,8 +93,8 @@ public class HibernateDatabase implements Database {
         }
         try {
             return repository.existsById(id);
-        } catch (RuntimeException e) {
-            throw new DatabaseOperationException();
+        } catch (Exception e) {
+            throw new DatabaseOperationException("An error occurred during checking if invoice exists.", e);
         }
     }
 
@@ -102,8 +102,8 @@ public class HibernateDatabase implements Database {
     public long count() throws DatabaseOperationException {
         try {
             return repository.count();
-        } catch (RuntimeException e) {
-            throw new DatabaseOperationException();
+        } catch (Exception e) {
+            throw new DatabaseOperationException("An error occurred during getting number of invoices.", e);
         }
     }
 }
