@@ -1,10 +1,12 @@
-package pl.coderstrust.restapi;
+package pl.coderstrust.controller;
 
+import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,11 +19,11 @@ import pl.coderstrust.services.ServiceOperationException;
 
 @RestController
 @RequestMapping("/invoices")
-public class InvoiceRestController {
+public class InvoiceController {
 
     private InvoiceService invoiceService;
 
-    public InvoiceRestController(InvoiceService invoiceService) {
+    public InvoiceController(InvoiceService invoiceService) {
         this.invoiceService = invoiceService;
     }
 
@@ -49,66 +51,74 @@ public class InvoiceRestController {
         }
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, params = {"id"})
-    public ResponseEntity<?> getById(@RequestParam(required = true) Long id) {
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getById(@PathVariable("id") Long id) {
         if (id == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         try {
-            return new ResponseEntity<>(invoiceService.getById(id), HttpStatus.OK);
-        } catch (ServiceOperationException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, params = {"number"})
-    public ResponseEntity<?> getByNumber(@RequestParam(required = true) String number) {
-        if (number == null || number.isEmpty() || number.isBlank()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        try {
-            return new ResponseEntity<>(invoiceService.getByNumber(number), HttpStatus.OK);
-        } catch (ServiceOperationException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> update(@RequestBody(required = false) Invoice invoice) {
-        if (invoice == null || invoice.getId() == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        try {
-            if (!invoiceService.invoiceExists(invoice.getId())) {
-                return new ResponseEntity<>(HttpStatus.CONFLICT);
+            Optional<Invoice> invoice = invoiceService.getById(id);
+            if (invoice.isPresent()) {
+                return new ResponseEntity<>(invoice.get(), HttpStatus.OK);
             }
-            return new ResponseEntity<>(invoiceService.updateInvoice(invoice), HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (ServiceOperationException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE, params = {"id"})
-    public ResponseEntity<?> remove(@RequestParam (required = true) Long id) {
-        if (id == null) {
+    @GetMapping(value = "/byNumber", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getByNumber(@RequestParam(required = false) String number) {
+        if (number == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         try {
+            Optional<Invoice> invoice = invoiceService.getByNumber(number);
+            if (invoice.isPresent()) {
+                return new ResponseEntity<>(invoice.get(), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (ServiceOperationException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody(required = false) Invoice invoice) {
+        if (invoice == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        try {
+            if (!id.equals(invoice.getId())) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
             if (!invoiceService.invoiceExists(id)) {
-                return new ResponseEntity<>(HttpStatus.CONFLICT);
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            invoiceService.deleteInvoiceById(id);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(invoiceService.updateInvoice(invoice), HttpStatus.CREATED);
         } catch (ServiceOperationException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> remove(@PathVariable Long id) {
+        try {
+            if (invoiceService.invoiceExists(id)) {
+                invoiceService.deleteInvoiceById(id);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (ServiceOperationException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping
     public ResponseEntity<?> removeAll() {
         try {
             invoiceService.deleteAllInvoices();
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (ServiceOperationException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
