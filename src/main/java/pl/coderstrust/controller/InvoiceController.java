@@ -95,7 +95,7 @@ public class InvoiceController {
             if (!invoiceService.invoiceExists(id)) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            return new ResponseEntity<>(invoiceService.updateInvoice(invoice), HttpStatus.CREATED);
+            return new ResponseEntity<>(invoiceService.updateInvoice(invoice), HttpStatus.OK);
         } catch (ServiceOperationException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
