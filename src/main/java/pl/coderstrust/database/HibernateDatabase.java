@@ -67,7 +67,7 @@ public class HibernateDatabase implements Database {
             throw new IllegalArgumentException("Id cannot be lower then one");
         }
         try {
-            if (repository.existsById(id)) {
+            if (!repository.existsById(id)) {
                 repository.deleteById(id);
             }else {
                 throw new DatabaseOperationException("Invoice does not exist");
@@ -89,7 +89,7 @@ public class HibernateDatabase implements Database {
     @Override
     public boolean exists(Long id) throws DatabaseOperationException {
         if (id == null) {
-            throw new IllegalArgumentException("Id cannot be lower then zero");
+            throw new IllegalArgumentException("Id cannot be null");
         }
         try {
             return repository.existsById(id);

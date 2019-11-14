@@ -1,8 +1,5 @@
 package pl.coderstrust.model;
 
-import javax.persistence.Entity;
-
-@Entity
 public enum Vat {
     VAT_0(0.00f),
     VAT_5(0.05f),
