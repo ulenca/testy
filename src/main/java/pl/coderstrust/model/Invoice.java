@@ -16,7 +16,6 @@ import org.springframework.data.annotation.Id;
 
 @JsonDeserialize(builder = Invoice.InvoiceBuilder.class)
 @Entity
-
 public final class Invoice {
 
     @ManyToOne(cascade = CascadeType.ALL)
@@ -28,9 +27,9 @@ public final class Invoice {
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private final List<InvoiceEntry> entries;
 
+    private final Long id;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private final Long id;
     private final String number;
     private final LocalDate issuedDate;
     private final LocalDate dueDate;
