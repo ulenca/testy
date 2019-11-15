@@ -68,10 +68,9 @@ public class HibernateDatabase implements Database {
         }
         try {
             if (!repository.existsById(id)) {
-                repository.deleteById(id);
-            }else {
                 throw new DatabaseOperationException("Invoice does not exist");
             }
+            repository.deleteById(id);
         } catch (Exception e) {
             throw new DatabaseOperationException("An error occurred during deleting invoice.", e);
         }
