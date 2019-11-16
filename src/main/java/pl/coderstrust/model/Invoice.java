@@ -18,6 +18,10 @@ import org.springframework.data.annotation.Id;
 @Entity
 public final class Invoice {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private final Long id;
+
     @ManyToOne(cascade = CascadeType.ALL)
     private final Company seller;
 
@@ -27,7 +31,6 @@ public final class Invoice {
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private final List<InvoiceEntry> entries;
 
-    private final Long id;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private final String number;
