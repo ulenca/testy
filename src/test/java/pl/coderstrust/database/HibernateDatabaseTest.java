@@ -103,7 +103,9 @@ class HibernateDatabaseTest {
     void getByNumberMethodShouldThrowExceptionWhenAnErrorOccurDuringGettingInvoiceByNumber() {
         doThrow(new NonTransientDataAccessException("") {
         }).when(invoiceRepository).findOne(any(Example.class));
+
         assertThrows(DatabaseOperationException.class, () -> database.getByNumber("1"));
+
         verify(invoiceRepository).findOne(any(Example.class));
     }
 
@@ -123,7 +125,9 @@ class HibernateDatabaseTest {
     void getAllMethodShouldThrowExceptionWhenAnErrorOccurDuringGettingAllInvoicesFromDatabase() {
         doThrow(new NonTransientDataAccessException("") {
         }).when(invoiceRepository).findAll();
+
         assertThrows(DatabaseOperationException.class, () -> database.getAll());
+
         verify(invoiceRepository).findAll();
     }
 
@@ -147,7 +151,9 @@ class HibernateDatabaseTest {
     void deleteMethodShouldThrowExceptionWhenInvoiceDoesNotExist() {
         Long id = 69L;
         doReturn(false).when(invoiceRepository).existsById(id);
+
         assertThrows(DatabaseOperationException.class, () -> database.delete(id));
+
         verify(invoiceRepository, never()).deleteById(id);
     }
 
@@ -157,7 +163,9 @@ class HibernateDatabaseTest {
         doReturn(true).when(invoiceRepository).existsById(id);
         doThrow(new NonTransientDataAccessException("") {
         }).when(invoiceRepository).deleteById(id);
+
         assertThrows(DatabaseOperationException.class, () -> database.delete(id));
+
         verify(invoiceRepository).existsById(id);
         verify(invoiceRepository).deleteById(id);
     }
@@ -167,7 +175,9 @@ class HibernateDatabaseTest {
         Long id = 69L;
         doNothing().when(invoiceRepository).deleteById(id);
         doReturn(true).when(invoiceRepository).existsById(id);
+
         database.delete(id);
+
         verify(invoiceRepository).existsById(id);
         verify(invoiceRepository).deleteById(id);
     }
@@ -176,14 +186,18 @@ class HibernateDatabaseTest {
     void deleteAllMethodShouldThrowExceptionWhenAnErrorOccurDuringDeletingAllInvoices() {
         doThrow(new NonTransientDataAccessException("") {
         }).when(invoiceRepository).deleteAll();
+
         assertThrows(DatabaseOperationException.class, () -> database.deleteAll());
+
         verify(invoiceRepository).deleteAll();
     }
 
     @Test
     void shouldDeleteAllInvoices() throws DatabaseOperationException {
         doNothing().when(invoiceRepository).deleteAll();
+
         database.deleteAll();
+
         verify(invoiceRepository).deleteAll();
     }
 
@@ -191,7 +205,9 @@ class HibernateDatabaseTest {
     void shouldReturnTrueIfInvoiceExist() throws DatabaseOperationException {
         Invoice invoice = InvoiceGenerator.generateRandomInvoice();
         doReturn(true).when(invoiceRepository).existsById(invoice.getId());
+
         assertTrue(database.exists(invoice.getId()));
+
         verify(invoiceRepository).existsById(invoice.getId());
     }
 
@@ -199,7 +215,9 @@ class HibernateDatabaseTest {
     void shouldReturnFalseIfInvoiceDoesNotExist() throws DatabaseOperationException {
         Invoice invoice = InvoiceGenerator.generateRandomInvoice();
         doReturn(false).when(invoiceRepository).existsById(invoice.getId());
+
         assertFalse(database.exists(invoice.getId()));
+
         verify(invoiceRepository).existsById(invoice.getId());
     }
 
@@ -214,7 +232,9 @@ class HibernateDatabaseTest {
         Long id = 69L;
         doThrow(new NonTransientDataAccessException("") {
         }).when(invoiceRepository).existsById(id);
+
         assertThrows(DatabaseOperationException.class, () -> database.exists(id));
+
         verify(invoiceRepository).existsById(anyLong());
     }
 
@@ -222,14 +242,18 @@ class HibernateDatabaseTest {
     void countMethodShouldThrowExceptionWhenAnErrorOccurDuringCountingInvoices() {
         doThrow(new NonTransientDataAccessException("") {
         }).when(invoiceRepository).count();
+
         assertThrows(DatabaseOperationException.class, () -> database.count());
+
         verify(invoiceRepository).count();
     }
 
     @Test
     void shouldReturnNumberOfInvoices() throws DatabaseOperationException {
         doReturn(5L).when(invoiceRepository).count();
+
         long result = database.count();
+
         assertEquals(5L, result);
     }
 }

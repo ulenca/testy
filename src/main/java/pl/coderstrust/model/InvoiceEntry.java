@@ -6,11 +6,13 @@ import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @JsonDeserialize(builder = InvoiceEntry.InvoiceEntryBuilder.class)
 @Entity
 public final class InvoiceEntry {
 
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private final Long id;
     private final String description;
