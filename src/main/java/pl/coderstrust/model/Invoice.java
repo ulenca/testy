@@ -10,9 +10,9 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import org.springframework.data.annotation.Id;
 
 @JsonDeserialize(builder = Invoice.InvoiceBuilder.class)
 @Entity
@@ -34,6 +34,16 @@ public final class Invoice {
     private final String number;
     private final LocalDate issuedDate;
     private final LocalDate dueDate;
+
+    private Invoice() {
+        id = null;
+        seller = null;
+        buyer = null;
+        entries = null;
+        number = null;
+        issuedDate = null;
+        dueDate = null;
+    }
 
     private Invoice(Invoice.InvoiceBuilder builder) {
         id = builder.id;
@@ -87,12 +97,12 @@ public final class Invoice {
         }
         Invoice invoice = (Invoice) o;
         return id.equals(invoice.id)
-            && number.equals(invoice.number)
-            && issuedDate.equals(invoice.issuedDate)
-            && dueDate.equals(invoice.dueDate)
-            && seller.equals(invoice.seller)
-            && buyer.equals(invoice.buyer)
-            && entries.equals(invoice.entries);
+                && number.equals(invoice.number)
+                && issuedDate.equals(invoice.issuedDate)
+                && dueDate.equals(invoice.dueDate)
+                && seller.equals(invoice.seller)
+                && buyer.equals(invoice.buyer)
+                && entries.equals(invoice.entries);
     }
 
     @Override
@@ -103,14 +113,14 @@ public final class Invoice {
     @Override
     public String toString() {
         return "Invoice{"
-            + "id='" + id + '\''
-            + ", number='" + number + '\''
-            + ", issuedDate=" + issuedDate
-            + ", dueDate=" + dueDate
-            + ", seller=" + seller
-            + ", buyer=" + buyer
-            + ", entries=" + entries
-            + '}';
+                + "id='" + id + '\''
+                + ", number='" + number + '\''
+                + ", issuedDate=" + issuedDate
+                + ", dueDate=" + dueDate
+                + ", seller=" + seller
+                + ", buyer=" + buyer
+                + ", entries=" + entries
+                + '}';
     }
 
     public static final class InvoiceBuilder {

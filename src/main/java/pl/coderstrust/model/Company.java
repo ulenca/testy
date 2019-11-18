@@ -5,7 +5,7 @@ import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import org.springframework.data.annotation.Id;
+import javax.persistence.Id;
 
 @JsonDeserialize(builder = Company.CompanyBuilder.class)
 @Entity
@@ -20,6 +20,16 @@ public final class Company {
     private final String accountNumber;
     private final String phoneNumber;
     private final String email;
+
+    private Company() {
+        id = null;
+        name = null;
+        address = null;
+        taxId = null;
+        accountNumber = null;
+        phoneNumber = null;
+        email = null;
+    }
 
     private Company(CompanyBuilder builder) {
         id = builder.id;
