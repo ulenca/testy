@@ -31,8 +31,6 @@ public final class Invoice {
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private final List<InvoiceEntry> entries;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private final String number;
     private final LocalDate issuedDate;
     private final LocalDate dueDate;
