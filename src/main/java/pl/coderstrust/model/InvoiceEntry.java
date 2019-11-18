@@ -22,6 +22,16 @@ public final class InvoiceEntry {
     private final BigDecimal grossValue;
     private final Vat vatRate;
 
+    private InvoiceEntry() {
+        id = null;
+        description = null;
+        quantity = 0;
+        price = null;
+        netValue = null;
+        grossValue = null;
+        vatRate = null;
+    }
+
     private InvoiceEntry(InvoiceEntryBuilder builder) {
         id = builder.id;
         description = builder.description;
