@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.util.Objects;
+import org.springframework.data.annotation.PersistenceConstructor;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -31,6 +32,17 @@ public final class Company implements Serializable {
     private final String phoneNumber;
     @ApiModelProperty(value = "Company email address", required = true, example = "someAddress@gmail.com")
     private final String email;
+
+    @PersistenceConstructor
+    public Company(Long id, String name, String address, String taxId, String accountNumber, String phoneNumber, String email) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.taxId = taxId;
+        this.accountNumber = accountNumber;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+    }
 
     private Company() {
         id = null;

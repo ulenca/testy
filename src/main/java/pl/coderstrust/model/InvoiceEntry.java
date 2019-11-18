@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
+import org.springframework.data.annotation.PersistenceConstructor;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -32,6 +33,17 @@ public final class InvoiceEntry implements Serializable {
     private final BigDecimal grossValue;
     @ApiModelProperty(value = "Vat rate", required = true, example = "VAT_23")
     private final Vat vatRate;
+
+    @PersistenceConstructor
+    public InvoiceEntry(Long id, String description, long quantity, BigDecimal price, BigDecimal netValue, BigDecimal grossValue, Vat vatRate) {
+        this.id = id;
+        this.description = description;
+        this.quantity = quantity;
+        this.price = price;
+        this.netValue = netValue;
+        this.grossValue = grossValue;
+        this.vatRate = vatRate;
+    }
 
     private InvoiceEntry() {
         id = null;

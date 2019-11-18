@@ -1,6 +1,4 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://ula:test@localhost:27017/invoice_db
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
+      uri: mongodb://localhost:27017/invoice_db

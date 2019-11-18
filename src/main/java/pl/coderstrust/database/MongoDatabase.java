@@ -1,21 +1,29 @@
 package pl.coderstrust.database;
 
 import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
 import java.util.Collection;
 import java.util.Optional;
 
+import java.util.concurrent.atomic.AtomicLong;
+import org.apache.tomcat.jni.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Repository;
 import pl.coderstrust.model.Invoice;
 
+@Repository
 public class MongoDatabase implements Database {
 
-    private MongoOperations mongoOperations;
+    private MongoTemplate mongoTemplate;
+    private AtomicLong nextId = new AtomicLong(1);
 
     @Autowired
     public MongoDatabase(MongoTemplate mongoTemplate) {
-        this.mongoOperations = mongoTemplate;
+        this.mongoTemplate = mongoTemplate;
     }
 
     @Override
@@ -23,41 +31,83 @@ public class MongoDatabase implements Database {
         if (invoice == null) {
             throw new IllegalArgumentException("Invoice cannot be null");
         }
-        return mongoOperations.save(invoice);
+        Optional<Invoice> invoiceToSave = getById(invoice.getId());
+        if (invoice.getId() != null && invoiceToSave.isPresent()) {
+            return update(invoice, invoiceToSave.get().getMongoId());
+        }
+        return add(invoice);
+    }
+
+    private Invoice update(Invoice invoice, String mongoId) {
+        System.out.println("updating invoice");
+        Invoice invoiceToUpdate = Invoice.builder()
+                .withInvoice(invoice)
+                .build();
+        invoiceToUpdate.setMongoId(mongoId);
+        return mongoTemplate.save(invoiceToUpdate);
+    }
+
+    private Invoice add(Invoice invoice) {
+        Invoice invoiceToAdd = Invoice.builder()
+                .withInvoice(invoice)
+                .withId(nextId.getAndIncrement())
+                .build();
+        return mongoTemplate.save(invoiceToAdd);
     }
 
     @Override
     public Optional<Invoice> getById(Long id) throws DatabaseOperationException {
-        return Optional.empty();
+        if (id == null) {
+            throw new IllegalArgumentException("Id cannot be null");
+        }
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is(id));
+        return Optional.ofNullable(mongoTemplate.findOne(query, Invoice.class));
     }
 
     @Override
     public Optional<Invoice> getByNumber(String number) throws DatabaseOperationException {
-        return Optional.empty();
+        if (number == null) {
+            throw new IllegalArgumentException("Number cannot be null");
+        }
+        Query query = Query.query(Criteria.where("number").is(number));
+        return Optional.ofNullable(mongoTemplate.findOne(query, Invoice.class));
     }
 
     @Override
     public Collection<Invoice> getAll() throws DatabaseOperationException {
-        return null;
+        return mongoTemplate.findAll(Invoice.class);
     }
 
     @Override
     public void delete(Long id) throws DatabaseOperationException {
-
+        if (id == null) {
+            throw new IllegalArgumentException("Id cannot be null");
+        }
+        if (!exists(id)) {
+            throw new DatabaseOperationException("There is no invoice with such id");
+        }
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is(id));
+        mongoTemplate.findAndRemove(query, Invoice.class);
     }
 
     @Override
     public void deleteAll() throws DatabaseOperationException {
-
+        MongoCollection collection = mongoTemplate.getCollection("invoice");
+        collection.drop();
     }
 
     @Override
     public boolean exists(Long id) throws DatabaseOperationException {
-        return false;
+        if (id == null) {
+            throw new IllegalArgumentException("Id cannot be null");
+        }
+        return getById(id).isPresent();
     }
 
     @Override
     public long count() throws DatabaseOperationException {
-        return 0;
+        return getAll().size();
     }
 }
