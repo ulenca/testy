@@ -11,10 +11,12 @@ import pl.coderstrust.model.Invoice;
 @Service
 public class InvoiceService {
     private Database database;
+    private InvoiceEmailService emailService;
 
     @Autowired
-    public InvoiceService(Database database) {
+    public InvoiceService(Database database, InvoiceEmailService emailService) {
         this.database = database;
+        this.emailService = emailService;
     }
 
     public Collection<Invoice> getAllInvoices() throws ServiceOperationException {
@@ -56,7 +58,9 @@ public class InvoiceService {
             if (invoiceId != null && database.exists(invoiceId)) {
                 throw new ServiceOperationException("Invoice already exists in database.");
             }
-            return database.save(invoice);
+            Invoice addedInvoice =  database.save(invoice);
+            emailService.sendSimpleMessage("ulenca2905@gmail.com", "New invoice added to database", invoice.toString());
+            return addedInvoice;
         } catch (DatabaseOperationException e) {
             throw new ServiceOperationException("Failed to add invoice", e);
         }
