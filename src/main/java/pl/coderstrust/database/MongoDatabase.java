@@ -1,14 +1,11 @@
 package pl.coderstrust.database;
 
-import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import java.util.Collection;
 import java.util.Optional;
 
 import java.util.concurrent.atomic.AtomicLong;
-import org.apache.tomcat.jni.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
