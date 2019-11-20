@@ -91,7 +91,7 @@ public final class Invoice implements Serializable {
     }
 
     public String getMongoId() {
-            return mongoId;
+        return mongoId;
     }
 
     public void setMongoId(String mongoId) {

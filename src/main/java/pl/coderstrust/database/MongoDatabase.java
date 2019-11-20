@@ -2,6 +2,7 @@ package pl.coderstrust.database;
 
 import com.mongodb.client.MongoCollection;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Optional;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -16,7 +17,6 @@ import pl.coderstrust.model.Invoice;
 public class MongoDatabase implements Database {
 
     private MongoTemplate mongoTemplate;
-    private AtomicLong nextId = new AtomicLong(1);
 
     @Autowired
     public MongoDatabase(MongoTemplate mongoTemplate) {
@@ -36,7 +36,6 @@ public class MongoDatabase implements Database {
     }
 
     private Invoice update(Invoice invoice, String mongoId) {
-        System.out.println("updating invoice");
         Invoice invoiceToUpdate = Invoice.builder()
                 .withInvoice(invoice)
                 .build();
@@ -44,10 +43,18 @@ public class MongoDatabase implements Database {
         return mongoTemplate.save(invoiceToUpdate);
     }
 
-    private Invoice add(Invoice invoice) {
+    private Invoice add(Invoice invoice) throws DatabaseOperationException {
+        AtomicLong maxId;
+        if (count() == 0) {
+            maxId = new AtomicLong(0);
+        } else {
+            maxId = new AtomicLong(getAll().stream()
+                    .max(Comparator.comparing(i -> i.getId()))
+                    .get().getId());
+        }
         Invoice invoiceToAdd = Invoice.builder()
                 .withInvoice(invoice)
-                .withId(nextId.getAndIncrement())
+                .withId(maxId.incrementAndGet())
                 .build();
         return mongoTemplate.save(invoiceToAdd);
     }
@@ -57,8 +64,7 @@ public class MongoDatabase implements Database {
         if (id == null) {
             throw new IllegalArgumentException("Id cannot be null");
         }
-        Query query = new Query();
-        query.addCriteria(Criteria.where("id").is(id));
+        Query query = Query.query(Criteria.where("id").is(id));
         return Optional.ofNullable(mongoTemplate.findOne(query, Invoice.class));
     }
 
@@ -84,8 +90,7 @@ public class MongoDatabase implements Database {
         if (!exists(id)) {
             throw new DatabaseOperationException("There is no invoice with such id");
         }
-        Query query = new Query();
-        query.addCriteria(Criteria.where("id").is(id));
+        Query query = Query.query(Criteria.where("id").is(id));
         mongoTemplate.findAndRemove(query, Invoice.class);
     }
 
