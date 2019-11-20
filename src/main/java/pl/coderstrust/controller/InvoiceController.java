@@ -63,7 +63,8 @@ public class InvoiceController {
             }
             Invoice addedInvoice = invoiceService.addInvoice(invoice);
             emailService.sendSimpleMessage(
-                    "ulenca2905@gmail.com",
+                    "coderstrustmailservice@gmail.com",
+                    "coderstrustmailservice@gmail.com",
                     "New invoice added to database",
                     addedInvoice.toString());
             return new ResponseEntity<>(addedInvoice, HttpStatus.CREATED);

@@ -95,7 +95,7 @@ public class InvoiceControllerTest {
         Invoice addedInvoice = InvoiceGenerator.generateRandomInvoice();
         doReturn(false).when(invoiceService).invoiceExists(invoiceToAdd.getId());
         doReturn(addedInvoice).when(invoiceService).addInvoice(invoiceToAdd);
-        doNothing().when(emailService).sendSimpleMessage(anyString(), anyString(), anyString());
+        doNothing().when(emailService).sendSimpleMessage(anyString(), anyString(), anyString(), anyString());
 
         mockMvc.perform(
                 post("/invoices")
@@ -107,7 +107,7 @@ public class InvoiceControllerTest {
 
         verify(invoiceService).addInvoice(invoiceToAdd);
         verify(invoiceService).invoiceExists(invoiceToAdd.getId());
-        verify(emailService).sendSimpleMessage(anyString(), anyString(), anyString());
+        verify(emailService).sendSimpleMessage(anyString(), anyString(), anyString(), anyString());
     }
 
     @Test
