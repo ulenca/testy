@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.concurrent.atomic.AtomicLong;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,12 +26,6 @@ class InFileDatabaseTest {
 
     private ObjectMapper mapper;
     private AtomicLong nextId;
-
-    @BeforeEach
-    public void init() {
-        mapper = new ObjectMapper();
-        nextId = new AtomicLong();
-    }
 
     @Test
     void saveMethodShouldThrowExceptionForNullAsInvoice() {

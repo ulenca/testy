@@ -1,13 +1,12 @@
 package pl.coderstrust.database;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.Collection;
 import java.util.Optional;
 import pl.coderstrust.model.Invoice;
 
 public interface Database {
 
-    Invoice save(Invoice invoice) throws DatabaseOperationException, JsonProcessingException;
+    Invoice save(Invoice invoice) throws DatabaseOperationException;
 
     Optional<Invoice> getById(Long id) throws DatabaseOperationException;
 

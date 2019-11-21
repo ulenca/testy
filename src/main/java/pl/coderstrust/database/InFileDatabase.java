@@ -1,11 +1,13 @@
 package pl.coderstrust.database;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 import pl.coderstrust.configuration.InFileDatabaseProperties;
 import pl.coderstrust.helpers.FileHelper;
 import pl.coderstrust.model.Invoice;
@@ -36,87 +38,167 @@ public class InFileDatabase implements Database {
         if (lastLine == null) {
             return 0;
         }
-        Invoice invoice = mapper.readValue(lastLine, Invoice.class);
+        Invoice invoice = deserializeToInvoice(lastLine);
+        if (invoice == null) {
+            return 0;
+        }
         return invoice.getId();
     }
 
     @Override
-    public Invoice save(Invoice invoice) throws DatabaseOperationException, JsonProcessingException {
+    public synchronized Invoice save(Invoice invoice) throws DatabaseOperationException {
         if (invoice == null) {
             throw new IllegalArgumentException("Invoice can not be null");
         }
-        //check if the invoice exists in the fileDatabase - if yes  return update(Inovice)
-
-        // return add(Invoice)
-
-        ObjectMapper mapper = new ObjectMapper();
-        String invoiceString = mapper.writeValueAsString(invoice);
-        return null;
+        try {
+            if (invoice.getId() != null && invoiceExists(invoice.getId())) {
+                return update(invoice);
+            }
+            return add(invoice);
+        } catch (IOException e) {
+            throw new DatabaseOperationException();
+        }
     }
 
-    private Invoice update(Invoice invoice) {
-        if (invoice == null) {
-            throw new IllegalArgumentException("Invoice can not be null");
+    private boolean invoiceExists(Long id) throws IOException {
+        if (id == null) {
+            throw new IllegalArgumentException("Id can not be null");
         }
-        //use the invoice id  to get the invoice and update the values
-        return invoice;
+        return getAllInvoices().stream()
+            .anyMatch(invoice -> invoice.getId().equals(id));
     }
 
-    private Invoice add(Invoice invoice) {
+    private Invoice deserializeToInvoice(String json) {
+        try {
+            return mapper.readValue(json, Invoice.class);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    private List<Invoice> getAllInvoices() throws IOException {
+        return fileHelper.readLines(properties.getFilePath()).stream()
+            .map(this::deserializeToInvoice)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+    }
+
+    private Invoice update(Invoice invoice) throws DatabaseOperationException, IOException {
         if (invoice == null) {
             throw new IllegalArgumentException("Invoice can not be null");
         }
-        //write the invoice to the fileDatabase
-        return invoice;
+        Invoice invoiceToUpdate = Invoice.builder()
+            .withInvoice(invoice)
+            .build();
+        deleteById(invoiceToUpdate.getId());
+        fileHelper.writeLine(properties.getFilePath(), mapper.writeValueAsString(invoiceToUpdate));
+        return invoiceToUpdate;
+    }
+
+    private Invoice add(Invoice invoice) throws IOException {
+        if (invoice == null) {
+            throw new IllegalArgumentException("Invoice can not be null");
+        }
+        Invoice invoiceToAdd = Invoice.builder()
+            .withInvoice(invoice)
+            .withId(nextId.incrementAndGet())
+            .build();
+        fileHelper.writeLine(properties.getFilePath(), mapper.writeValueAsString(invoiceToAdd));
+        return invoiceToAdd;
     }
 
     @Override
     public Optional<Invoice> getById(Long id) throws DatabaseOperationException {
         if (id == null) {
-            throw new IllegalArgumentException("Id cannot be null");
+            throw new IllegalArgumentException("Id can not be null");
         }
-        // find the invoice with the given id and return it
-        return Optional.empty();
+        try {
+            return getAllInvoices().stream()
+                .filter(x -> x.getId().equals(id))
+                .findFirst();
+        } catch (IOException e) {
+            throw new DatabaseOperationException("An error occurred during getting invoice by Id", e);
+        }
     }
 
     @Override
     public Optional<Invoice> getByNumber(String number) throws DatabaseOperationException {
         if (number == null) {
-            throw new IllegalArgumentException("Number cannot be null");
+            throw new IllegalArgumentException("Number can not be null");
         }
-        //find the invoice with the given number and return it
-        return Optional.empty();
+        try {
+            return getAllInvoices().stream()
+                .filter(x -> x.getNumber().equals(number))
+                .findFirst();
+        } catch (IOException e) {
+            throw new DatabaseOperationException("An error occurred during getting invoice by number", e);
+        }
     }
 
     @Override
     public Collection<Invoice> getAll() throws DatabaseOperationException {
-        //return all invoices from the fileDatabase
-        return null;
-    }
-
-    @Override
-    public void delete(Long id) throws DatabaseOperationException {
-        if (id == null) {
-            throw new IllegalArgumentException("Id cannot be null");
+        try {
+            return getAllInvoices();
+        } catch (IOException e) {
+            throw new DatabaseOperationException("An error occurred during getting all invoices", e);
         }
-        //find the invoice with given id
     }
 
     @Override
-    public void deleteAll() throws DatabaseOperationException {
-        //clear the content of the fileDatabase or delete the file?
+    public synchronized void delete(Long id) throws DatabaseOperationException {
+        if (id == null) {
+            throw new IllegalArgumentException("Id can not be null");
+        }
+        try {
+            deleteById(id);
+        } catch (IOException e) {
+            throw new DatabaseOperationException("An error occurred during getting Id", e);
+        }
+    }
+
+    private void deleteById(Long id) throws DatabaseOperationException, IOException {
+        fileHelper.removeLine(properties.getFilePath(), getPositionInDatabase(id));
+    }
+
+    private int getPositionInDatabase(Long id) throws DatabaseOperationException, IOException {
+        List<Invoice> invoices = getAllInvoices();
+        Optional<Invoice> invoice = invoices.stream()
+            .filter(x -> x.getId().equals(id))
+            .findFirst();
+        if (!invoice.isPresent()) {
+            throw new DatabaseOperationException("There is no invoice in database");
+        }
+        return invoices.indexOf(invoice.get()) + 1;
+    }
+
+    @Override
+    public synchronized void deleteAll() throws DatabaseOperationException {
+        try {
+            fileHelper.clear(properties.getFilePath());
+        } catch (IOException e) {
+            throw new DatabaseOperationException("An error occurred during deleting all invoices", e);
+        }
     }
 
     @Override
     public boolean exists(Long id) throws DatabaseOperationException {
         if (id == null) {
-            throw new IllegalArgumentException("Id cannot be null");
+            throw new IllegalArgumentException("Id can not be null");
         }
-        return false;
+        try {
+            return getAllInvoices().stream()
+                .anyMatch(x -> x.getId().equals(id));
+        } catch (Exception e) {
+            throw new DatabaseOperationException("An error occurred during getting invoice by Id", e);
+        }
     }
 
     @Override
     public long count() throws DatabaseOperationException {
-        return 0;
+        try {
+            return getAllInvoices().size();
+        } catch (IOException e) {
+            throw new DatabaseOperationException("An error occurred during getting number of invoices", e);
+        }
     }
 }

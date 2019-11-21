@@ -84,12 +84,10 @@ public final class Invoice {
         return dueDate;
     }
 
+    public Company getBuyer() {return buyer;}
+
     public Company getSeller() {
         return seller;
-    }
-
-    public Company getBuyer() {
-        return buyer;
     }
 
     public List<InvoiceEntry> getEntries() {
