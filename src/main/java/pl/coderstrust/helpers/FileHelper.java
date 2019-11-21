@@ -34,7 +34,7 @@ public class FileHelper {
         return FileUtils.readLines(new File(filePath), ENCODING);
     }
 
-    public void create(String filePath) throws IOException {
+    public static void create(String filePath) throws IOException {
         if (filePath == null) {
             throw new IllegalArgumentException("File path cannot be null");
         }
@@ -91,7 +91,7 @@ public class FileHelper {
         FileUtils.writeLines(file, ENCODING.name(), lines, false);
     }
 
-    public String readLastLine(String filePath) throws IOException {
+    public static String readLastLine(String filePath) throws IOException {
         if (filePath == null) {
             throw new IllegalArgumentException("File path cannot be null");
         }

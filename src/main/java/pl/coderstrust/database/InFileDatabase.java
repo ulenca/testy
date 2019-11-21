@@ -25,7 +25,7 @@ public class InFileDatabase implements Database {
     }
 
     private void init() throws IOException {
-        if(!fileHelper.exist(properties.getFilePath())) {
+        if (!fileHelper.exist(properties.getFilePath())) {
             fileHelper.create(properties.getFilePath());
         }
         nextId = new AtomicLong(getLastInvoiceId());
@@ -33,7 +33,7 @@ public class InFileDatabase implements Database {
 
     private long getLastInvoiceId() throws IOException {
         String lastLine = fileHelper.readLastLine(properties.getFilePath());
-        if(lastLine == null) {
+        if (lastLine == null) {
             return 0;
         }
         Invoice invoice = mapper.readValue(lastLine, Invoice.class);
@@ -42,7 +42,7 @@ public class InFileDatabase implements Database {
 
     @Override
     public Invoice save(Invoice invoice) throws DatabaseOperationException, JsonProcessingException {
-        if(invoice == null) {
+        if (invoice == null) {
             throw new IllegalArgumentException("Invoice can not be null");
         }
         //check if the invoice exists in the fileDatabase - if yes  return update(Inovice)
@@ -55,7 +55,7 @@ public class InFileDatabase implements Database {
     }
 
     private Invoice update(Invoice invoice) {
-        if(invoice == null) {
+        if (invoice == null) {
             throw new IllegalArgumentException("Invoice can not be null");
         }
         //use the invoice id  to get the invoice and update the values
@@ -63,12 +63,13 @@ public class InFileDatabase implements Database {
     }
 
     private Invoice add(Invoice invoice) {
-        if(invoice == null) {
+        if (invoice == null) {
             throw new IllegalArgumentException("Invoice can not be null");
         }
         //write the invoice to the fileDatabase
         return invoice;
     }
+
     @Override
     public Optional<Invoice> getById(Long id) throws DatabaseOperationException {
         if (id == null) {
@@ -103,7 +104,7 @@ public class InFileDatabase implements Database {
 
     @Override
     public void deleteAll() throws DatabaseOperationException {
-            //clear the content of the fileDatabase or delete the file?
+        //clear the content of the fileDatabase or delete the file?
     }
 
     @Override

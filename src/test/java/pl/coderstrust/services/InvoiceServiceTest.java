@@ -12,6 +12,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -97,7 +98,7 @@ class InvoiceServiceTest {
     }
 
     @Test
-    void shouldAddInvoice() throws DatabaseOperationException, ServiceOperationException {
+    void shouldAddInvoice() throws DatabaseOperationException, ServiceOperationException, JsonProcessingException {
         Invoice invoiceToAdd = InvoiceGenerator.generateRandomInvoice();
         Invoice addedInvoice = InvoiceGenerator.generateRandomInvoice();
         doReturn(false).when(database).exists(invoiceToAdd.getId());
@@ -111,7 +112,7 @@ class InvoiceServiceTest {
     }
 
     @Test
-    void shouldAddInvoiceWithNullId() throws DatabaseOperationException, ServiceOperationException {
+    void shouldAddInvoiceWithNullId() throws DatabaseOperationException, ServiceOperationException, JsonProcessingException {
         Invoice invoiceToAdd = InvoiceGenerator.generateRandomInvoiceWithNullId();
         Invoice addedInvoice = InvoiceGenerator.generateRandomInvoice();
         doReturn(addedInvoice).when(database).save(invoiceToAdd);
@@ -123,7 +124,7 @@ class InvoiceServiceTest {
     }
 
     @Test
-    void addInvoiceMethodShouldThrowExceptionWhenAnErrorOccurDuringAddingInvoiceToDatabase() throws DatabaseOperationException {
+    void addInvoiceMethodShouldThrowExceptionWhenAnErrorOccurDuringAddingInvoiceToDatabase() throws DatabaseOperationException, JsonProcessingException {
         Invoice invoice = InvoiceGenerator.generateRandomInvoice();
         doReturn(false).when(database).exists(invoice.getId());
         doThrow(new DatabaseOperationException()).when(database).save(invoice);
@@ -133,7 +134,7 @@ class InvoiceServiceTest {
     }
 
     @Test
-    void addInvoiceMethodShouldThrowExceptionForNullInvoice() throws DatabaseOperationException {
+    void addInvoiceMethodShouldThrowExceptionForNullInvoice() throws DatabaseOperationException, JsonProcessingException {
         Invoice invoice = InvoiceGenerator.generateRandomInvoice();
         assertThrows(IllegalArgumentException.class, () -> invoiceService.addInvoice(null));
         verify(database, never()).save(invoice);
@@ -148,7 +149,7 @@ class InvoiceServiceTest {
     }
 
     @Test
-    void shouldUpdateInvoice() throws DatabaseOperationException, ServiceOperationException {
+    void shouldUpdateInvoice() throws DatabaseOperationException, ServiceOperationException, JsonProcessingException {
         Invoice invoiceToUpdate = InvoiceGenerator.generateRandomInvoice();
         Invoice invoiceUpdated = InvoiceGenerator.generateRandomInvoice();
         doReturn(true).when(database).exists(invoiceToUpdate.getId());
@@ -162,7 +163,7 @@ class InvoiceServiceTest {
     }
 
     @Test
-    void updateInvoiceMethodShouldThrowExceptionWhenAnErrorOccurDuringUpdateInvoiceInDatabase() throws DatabaseOperationException {
+    void updateInvoiceMethodShouldThrowExceptionWhenAnErrorOccurDuringUpdateInvoiceInDatabase() throws DatabaseOperationException, JsonProcessingException {
         Invoice invoice = InvoiceGenerator.generateRandomInvoice();
         doThrow(new DatabaseOperationException()).when(database).save(invoice);
         doReturn(true).when(database).exists(invoice.getId());
@@ -172,14 +173,14 @@ class InvoiceServiceTest {
     }
 
     @Test
-    void updateInvoiceMethodShouldThrowExceptionForNullInvoice() throws DatabaseOperationException {
+    void updateInvoiceMethodShouldThrowExceptionForNullInvoice() throws DatabaseOperationException, JsonProcessingException {
         Invoice invoice = InvoiceGenerator.generateRandomInvoice();
         assertThrows(IllegalArgumentException.class, () -> invoiceService.updateInvoice(null));
         verify(database, never()).save(invoice);
     }
 
     @Test
-    void updateInvoiceMethodShouldThrowExceptionForNullInvoiceId() throws DatabaseOperationException {
+    void updateInvoiceMethodShouldThrowExceptionForNullInvoiceId() throws DatabaseOperationException, JsonProcessingException {
         assertThrows(IllegalArgumentException.class, () -> invoiceService.updateInvoice(null));
         verify(database, never()).save(InvoiceGenerator.generateRandomInvoice());
     }

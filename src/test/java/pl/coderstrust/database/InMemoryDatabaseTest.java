@@ -10,6 +10,7 @@ import static pl.coderstrust.generators.InvoiceGenerator.generateRandomInvoiceWi
 import static pl.coderstrust.generators.InvoiceGenerator.generateRandomInvoices;
 import static pl.coderstrust.generators.InvoiceGenerator.getRandomInvoiceWithSpecificId;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +33,7 @@ public class InMemoryDatabaseTest {
     }
 
     @Test
-    void shouldAddInvoice() throws DatabaseOperationException {
+    void shouldAddInvoice() throws DatabaseOperationException, JsonProcessingException {
         Invoice invoiceToAdd = generateRandomInvoice();
         Invoice expectedInvoice = Invoice.builder()
             .withInvoice(invoiceToAdd)
@@ -46,7 +47,7 @@ public class InMemoryDatabaseTest {
     }
 
     @Test
-    void shouldAddMultipleInvoices() throws DatabaseOperationException {
+    void shouldAddMultipleInvoices() throws DatabaseOperationException, JsonProcessingException {
         List<Invoice> invoicesToAdd = generateRandomInvoices(3);
         List<Invoice> expectedInvoices = List.of(changeInvoiceId(invoicesToAdd.get(0), 1L),
             changeInvoiceId(invoicesToAdd.get(1), 2L),
@@ -62,7 +63,7 @@ public class InMemoryDatabaseTest {
     }
 
     @Test
-    void shouldAddInvoiceWithNullId() throws DatabaseOperationException {
+    void shouldAddInvoiceWithNullId() throws DatabaseOperationException, JsonProcessingException {
         Invoice invoiceToAdd = generateRandomInvoiceWithNullId();
         Invoice expectedInvoice = Invoice.builder()
             .withInvoice(invoiceToAdd)
@@ -83,7 +84,7 @@ public class InMemoryDatabaseTest {
     }
 
     @Test
-    void shouldUpdateInvoice() throws DatabaseOperationException {
+    void shouldUpdateInvoice() throws DatabaseOperationException, JsonProcessingException {
         Invoice invoiceInDatabase = generateRandomInvoice();
         storage.put(invoiceInDatabase.getId(), invoiceInDatabase);
         Invoice invoiceToUpdate = Invoice.builder()
