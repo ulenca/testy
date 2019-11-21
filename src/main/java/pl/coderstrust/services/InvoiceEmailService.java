@@ -9,12 +9,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class InvoiceEmailService implements EmailService {
 
-    @Autowired
     public JavaMailSender emailSender;
+
+    @Autowired
+    public InvoiceEmailService(JavaMailSender emailSender) {
+        this.emailSender = emailSender;
+        System.out.println("Email service created");
+    }
 
     @Async
     public void sendSimpleMessage(String to, String from, String subject, String text) {
-        if (to == null || subject == null || text == null) {
+        if (to == null || from == null || subject == null || text == null) {
             throw new IllegalArgumentException("Recipient, subject and content cannot be null!");
         }
         SimpleMailMessage message = new SimpleMailMessage();
