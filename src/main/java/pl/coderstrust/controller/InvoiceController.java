@@ -1,5 +1,7 @@
 package pl.coderstrust.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,6 +21,8 @@ import pl.coderstrust.services.ServiceOperationException;
 
 @RestController
 @RequestMapping("/invoices")
+@Api(value = "/invoices", description = "Operations about invoices")
+
 public class InvoiceController {
 
     private InvoiceService invoiceService;
@@ -27,6 +31,10 @@ public class InvoiceController {
         this.invoiceService = invoiceService;
     }
 
+    @ApiOperation(httpMethod = "ADD",
+            value = "Resource to add a invoice",
+            response = Invoice.class,
+            responseContainer = "List")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> add(@RequestBody(required = false) Invoice invoice) {
         if (invoice == null) {

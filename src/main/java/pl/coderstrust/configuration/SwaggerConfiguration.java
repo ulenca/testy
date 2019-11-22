@@ -1,8 +1,10 @@
 package pl.coderstrust.configuration;
 
+import io.swagger.annotations.Api;
 import java.util.Collections;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -18,19 +20,20 @@ public class SwaggerConfiguration {
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.any())
-                .paths(PathSelectors.any())
+                .apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
+                .paths(PathSelectors.ant("/Invoices/**"))
                 .build()
+                .consumes(Collections.singleton("application/json"))
+                .produces(Collections.singleton("application/json"))
                 .apiInfo(apiInfo());
     }
 
     private ApiInfo apiInfo() {
-        return new ApiInfo(
-                "My REST API",
-                "Some custom description of API.",
-                "API TOS",
-                "Terms of service",
-                new Contact("John Doe", "www.example.com", "myeaddress@company.com"),
-                "License of API", "API license URL", Collections.emptyList());
+        return new ApiInfoBuilder()
+                .title("Invoice Service")
+                .description("This application is created to handle with invoices")
+                .contact(new Contact("Urszula, Tomasz, Andrzej","https://coderstrust.pl","hello@coderstrust.pl"))
+                .version("v1")
+                .build();
     }
 }
