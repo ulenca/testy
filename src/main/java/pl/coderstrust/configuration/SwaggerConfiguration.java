@@ -33,7 +33,7 @@ public class SwaggerConfiguration {
                 .title("Invoice Service")
                 .description("This application is created to handle with invoices")
                 .contact(new Contact("Urszula, Tomasz, Andrzej","https://coderstrust.pl","hello@coderstrust.pl"))
-                .version("v1")
+                .version("1.0")
                 .build();
     }
 }

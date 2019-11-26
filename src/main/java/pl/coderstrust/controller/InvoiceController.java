@@ -1,7 +1,10 @@
 package pl.coderstrust.controller;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pl.coderstrust.model.Invoice;
 import pl.coderstrust.services.InvoiceService;
@@ -21,8 +25,7 @@ import pl.coderstrust.services.ServiceOperationException;
 
 @RestController
 @RequestMapping("/invoices")
-@Api(value = "/invoices", description = "Operations about invoices")
-
+@Api(value = "/invoices")
 public class InvoiceController {
 
     private InvoiceService invoiceService;
@@ -31,10 +34,14 @@ public class InvoiceController {
         this.invoiceService = invoiceService;
     }
 
-    @ApiOperation(httpMethod = "ADD",
-            value = "Resource to add a invoice",
-            response = Invoice.class,
-            responseContainer = "List")
+    @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation(value = "Add new invoice",
+            notes = "Add new invoice to database",
+            response = Invoice.class)
+    @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid ID supplied"),
+            @ApiResponse(code = 409, message = "Conflict"),
+            @ApiResponse(code = 500, message = "Internal server error")})
+    @ApiImplicitParam(name = "Invoice", required = true, dataType = "Invoice")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> add(@RequestBody(required = false) Invoice invoice) {
         if (invoice == null) {
@@ -50,6 +57,11 @@ public class InvoiceController {
         }
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get all invoices",
+            notes = "Get all invoices from database",
+            response = Invoice.class)
+    @ApiResponse(code = 500, message = "Internal server error")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAll() {
         try {
@@ -59,6 +71,13 @@ public class InvoiceController {
         }
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get invoice by ID",
+            notes = "Get invoice from database by ID",
+            response = Invoice.class)
+    @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid ID supplied"),
+            @ApiResponse(code = 404, message = "Invoice not found"),
+            @ApiResponse(code = 500, message = "Internal server error")})
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getById(@PathVariable("id") Long id) {
         if (id == null) {
@@ -75,6 +94,13 @@ public class InvoiceController {
         }
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get invoice by number",
+            notes = "Get invoice from database by number",
+            response = Invoice.class)
+    @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid number supplied"),
+            @ApiResponse(code = 404, message = "Invoice not found"),
+            @ApiResponse(code = 500, message = "Internal server error")})
     @GetMapping(value = "/byNumber", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getByNumber(@RequestParam(required = false) String number) {
         if (number == null) {
@@ -91,6 +117,14 @@ public class InvoiceController {
         }
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Update invoice",
+            notes = "Update invoice by ID",
+            response = Invoice.class)
+    @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid invoice supplied"),
+            @ApiResponse(code = 404, message = "Invoice not found"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody(required = false) Invoice invoice) {
         if (invoice == null) {
@@ -109,6 +143,13 @@ public class InvoiceController {
         }
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiOperation(value = "Remove invoice",
+            notes = "Remove invoice by ID",
+            response = Invoice.class)
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Invoice not found"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<?> remove(@PathVariable Long id) {
         try {
@@ -122,6 +163,11 @@ public class InvoiceController {
         }
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiOperation(value = "Remove all invoices",
+            notes = "Remove all invoices from database",
+            response = Invoice.class)
+    @ApiResponse(code = 500, message = "Internal server error")
     @DeleteMapping
     public ResponseEntity<?> removeAll() {
         try {
