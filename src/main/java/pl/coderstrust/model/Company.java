@@ -1,24 +1,34 @@
 package pl.coderstrust.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+@ApiModel(value = "Company")
 @JsonDeserialize(builder = Company.CompanyBuilder.class)
 @Entity
 public final class Company {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ApiModelProperty(position = -1, required = true, example = "1L", dataType = "Long")
     private final Long id;
+    @ApiModelProperty(value = "Company name", required = true, example = "Coca-Cola")
     private final String name;
+    @ApiModelProperty(value = "Company address", required = true, example = "Down street 32/1")
     private final String address;
+    @ApiModelProperty(value = "Company tax ID", required = true, example = "5687195749")
     private final String taxId;
+    @ApiModelProperty(value = "Company account number", required = true, example = "27 1288 2000 0000 0119 4879 1265")
     private final String accountNumber;
+    @ApiModelProperty(value = "Company phone number", required = true, example = "123 456 789")
     private final String phoneNumber;
+    @ApiModelProperty(value = "Company email address", required = true, example ="someAddress@gmail.com")
     private final String email;
 
     private Company() {

@@ -1,6 +1,8 @@
 package pl.coderstrust.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,19 +16,30 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
+@ApiModel(value = "Invoice")
 @JsonDeserialize(builder = Invoice.InvoiceBuilder.class)
 @Entity
 public final class Invoice {
 
+    @ApiModelProperty(position = -1, required = true, example = "1L", dataType = "Long")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private final Long id;
+    @ApiModelProperty(value = "Invoice number", required = true, example = "180213-002")
+    private final String number;
+    @ApiModelProperty(value = "Invoice issued data", required = true, example = "12/12/2019")
+    private final LocalDate issuedDate;
+    @ApiModelProperty(value = "Invoice due data", required = true, example = "11/12/2019")
+    private final LocalDate dueDate;
+    @ApiModelProperty(value = "Seller data")
 
     @ManyToOne(cascade = CascadeType.ALL)
     private final Company seller;
+    @ApiModelProperty(value = "Buyer data")
 
     @ManyToOne(cascade = CascadeType.ALL)
     private final Company buyer;
+    @ApiModelProperty(value = "Invoice entries")
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private final List<InvoiceEntry> entries;
@@ -182,4 +195,5 @@ public final class Invoice {
             return new Invoice(this);
         }
     }
+
 }
