@@ -37,8 +37,92 @@ class InFileDatabaseTest {
     }
 
     @Test
-    void saveMethodShouldThrowExceptionForNullAsInvoice() {
+    void saveMethodShouldThrowExceptionForNullAsInvoice() throws IOException {
         assertThrows(IllegalArgumentException.class, () -> database.save(null));
+    }
+
+    @Test
+    void shouldSaveInvoice() {
+    }
+
+    @Test
+    void saveInvoicesShouldThrowExceptionWhenAnErrorOccursDuringSavingInvoices() {
+    }
+
+    @Test
+    void getByIdMethodShouldThrowExceptionForNullAsId() {
+    }
+
+    @Test
+    void getByIdMethodShouldThrowExceptionWhenAnErrorOccurDuringGettingInvoice() {
+    }
+
+    @Test
+    void shouldReturnInvoiceById() {
+    }
+
+    @Test
+    void getByNumberMethodShouldThrowExceptionForNullAsNumber() {
+    }
+
+    @Test
+    void getByNumberMethodShouldThrowExceptionWhenAnErrorOccurDuringGettingInvoiceByNumber() {
+    }
+
+    @Test
+    void shouldReturnInvoiceByNumber() {
+    }
+
+    @Test
+    void getAllMethodShouldThrowExceptionWhenAnErrorOccursDuringGettingAllInvoicesFromDatabase() {
+    }
+
+    @Test
+    void shouldReturnAllInvoices() {
+    }
+
+    @Test
+    void deleteMethodShouldThrownExceptionForNullAsId() {
+    }
+
+    @Test
+    void deleteMethodShouldThrowExceptionWhenInvoiceDoesNotExist() {
+    }
+
+    @Test
+    void deleteMethodShouldThrowExceptionWhenAnErrorOccurDuringDeletingInvoiceByIdFromDatabase() {
+    }
+
+    @Test
+    void shouldDeleteInvoice() {
+    }
+
+    @Test
+    void deleteAllMethodShouldThrowExceptionWhenAnErrorOccurDuringDeletingAllInvoices() {
+    }
+
+    @Test
+    void shouldDeleteAllInvoices() {
+    }
+
+    @Test
+    void shouldReturnTrueIfInvoiceExist() {
+    }
+
+    @Test
+    void shouldReturnFalseIfInvoiceDoesNotExist() {
+    }
+
+    @Test
+    void existMethodShouldThrowExceptionForNullAsId() {
+    }
+
+    @Test
+    void existsMethodShouldThrowExceptionWhenAnErrorOccurDuringCheckingInvoiceExist() {
+    }
+
+    @Test
+    void countMethodShouldThrowExceptionWhenAnErrorOccurDuringCountingInvoices() {
     }
 
     @Test
