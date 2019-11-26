@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Objects;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -28,6 +29,10 @@ import javax.persistence.ManyToOne;
 public final class Invoice implements Serializable {
 
     @ApiModelProperty(value = "The unique identifier of the invoice", position = -1, dataType = "Long")
+    @Id
+    @JsonIgnore
+    private String mongoId;
+    @Indexed(unique = true)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private final Long id;
@@ -51,7 +56,7 @@ public final class Invoice implements Serializable {
     private final List<InvoiceEntry> entries;
 
     @PersistenceConstructor
-    public Invoice(String mongoId, Long id, String number, LocalDate issuedDate, LocalDate dueDate, Company seller, Company buyer, ArrayList<InvoiceEntry> entries) {
+    private Invoice(String mongoId, Long id, String number, LocalDate issuedDate, LocalDate dueDate, Company seller, Company buyer, ArrayList<InvoiceEntry> entries) {
         this.mongoId = mongoId;
         this.id = id;
         this.number = number;
@@ -77,6 +82,8 @@ public final class Invoice implements Serializable {
     }
 
     private Invoice(InvoiceBuilder builder) {
+    private Invoice(Invoice.InvoiceBuilder builder) {
+        mongoId = builder.mongoId;
         id = builder.id;
         number = builder.number;
         issuedDate = builder.issuedDate;
@@ -163,6 +170,7 @@ public final class Invoice implements Serializable {
     }
 
     public static final class InvoiceBuilder {
+        private String mongoId;
         private Long id;
         private String number;
         private LocalDate issuedDate;
@@ -172,6 +180,8 @@ public final class Invoice implements Serializable {
         private List<InvoiceEntry> entries;
 
         public InvoiceBuilder withInvoice(Invoice invoice) {
+        public Invoice.InvoiceBuilder withInvoice(Invoice invoice) {
+            this.mongoId = invoice.mongoId;
             this.id = invoice.id;
             this.number = invoice.number;
             this.issuedDate = invoice.issuedDate;
@@ -179,6 +189,11 @@ public final class Invoice implements Serializable {
             this.seller = invoice.seller;
             this.buyer = invoice.buyer;
             this.entries = invoice.entries;
+            return this;
+        }
+
+        public Invoice.InvoiceBuilder withMongoId(String mongoId) {
+            this.mongoId = mongoId;
             return this;
         }
 

@@ -34,7 +34,7 @@ public final class Company implements Serializable {
     private final String email;
 
     @PersistenceConstructor
-    public Company(Long id, String name, String address, String taxId, String accountNumber, String phoneNumber, String email) {
+    private Company(Long id, String name, String address, String taxId, String accountNumber, String phoneNumber, String email) {
         this.id = id;
         this.name = name;
         this.address = address;

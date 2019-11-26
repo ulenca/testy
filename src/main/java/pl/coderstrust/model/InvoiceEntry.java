@@ -35,7 +35,7 @@ public final class InvoiceEntry implements Serializable {
     private final Vat vatRate;
 
     @PersistenceConstructor
-    public InvoiceEntry(Long id, String description, long quantity, BigDecimal price, BigDecimal netValue, BigDecimal grossValue, Vat vatRate) {
+    private InvoiceEntry(Long id, String description, long quantity, BigDecimal price, BigDecimal netValue, BigDecimal grossValue, Vat vatRate) {
         this.id = id;
         this.description = description;
         this.quantity = quantity;
