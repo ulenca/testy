@@ -62,11 +62,7 @@ public class InvoiceController {
                 return new ResponseEntity<>(HttpStatus.CONFLICT);
             }
             Invoice addedInvoice = invoiceService.addInvoice(invoice);
-            emailService.sendSimpleMessage(
-                    "coderstrustmailservice@gmail.com",
-                    "coderstrustmailservice@gmail.com",
-                    "New invoice added to database",
-                    addedInvoice.toString());
+            emailService.sendSimpleMessage(addedInvoice);
             return new ResponseEntity<>(addedInvoice, HttpStatus.CREATED);
         } catch (ServiceOperationException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
