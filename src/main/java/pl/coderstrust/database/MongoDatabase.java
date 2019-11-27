@@ -21,9 +21,13 @@ public class MongoDatabase implements Database {
     private AtomicLong lastId;
 
     @Autowired
-    public MongoDatabase(MongoTemplate mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
-        init();
+    public MongoDatabase(MongoTemplate mongoTemplate) throws DatabaseOperationException {
+        try {
+            this.mongoTemplate = mongoTemplate;
+            init();
+        } catch (Exception e) {
+            throw new DatabaseOperationException();
+        }
     }
 
     private void init() {
@@ -43,11 +47,15 @@ public class MongoDatabase implements Database {
         if (invoice == null) {
             throw new IllegalArgumentException("Invoice cannot be null");
         }
-        Invoice invoiceInDatabase = getInvoiceById(invoice.getId());
-        if (invoiceInDatabase != null) {
-            return update(invoice, invoiceInDatabase.getMongoId());
+        try {
+            Invoice invoiceInDatabase = getInvoiceById(invoice.getId());
+            if (invoiceInDatabase != null) {
+                return update(invoice, invoiceInDatabase.getMongoId());
+            }
+            return add(invoice);
+        } catch (Exception e) {
+            throw new DatabaseOperationException();
         }
-        return add(invoice);
     }
 
     private Invoice getInvoiceById(Long id) {
@@ -63,7 +71,6 @@ public class MongoDatabase implements Database {
     }
 
     private Invoice add(Invoice invoice) throws DatabaseOperationException {
-        AtomicLong maxId;
         Invoice invoiceToAdd = Invoice.builder()
                 .withInvoice(invoice)
                 .withId(lastId.incrementAndGet())
@@ -76,11 +83,11 @@ public class MongoDatabase implements Database {
         if (id == null) {
             throw new IllegalArgumentException("Id cannot be null");
         }
-        Invoice invoice = getInvoiceById(id);
-        if (invoice != null) {
-            return Optional.of(invoice);
+        try {
+            return Optional.ofNullable(getInvoiceById(id));
+        } catch (Exception e) {
+            throw new DatabaseOperationException();
         }
-        return Optional.empty();
     }
 
     @Override
@@ -88,13 +95,21 @@ public class MongoDatabase implements Database {
         if (number == null) {
             throw new IllegalArgumentException("Number cannot be null");
         }
-        Query query = Query.query(Criteria.where("number").is(number));
-        return Optional.ofNullable(mongoTemplate.findOne(query, Invoice.class));
+        try {
+            Query query = Query.query(Criteria.where("number").is(number));
+            return Optional.ofNullable(mongoTemplate.findOne(query, Invoice.class));
+        } catch (Exception e) {
+            throw new DatabaseOperationException();
+        }
     }
 
     @Override
     public Collection<Invoice> getAll() throws DatabaseOperationException {
-        return mongoTemplate.findAll(Invoice.class);
+        try {
+            return mongoTemplate.findAll(Invoice.class);
+        } catch (Exception e) {
+            throw new DatabaseOperationException();
+        }
     }
 
     @Override
@@ -102,7 +117,12 @@ public class MongoDatabase implements Database {
         if (id == null) {
             throw new IllegalArgumentException("Id cannot be null");
         }
-        Invoice invoice = mongoTemplate.findAndRemove(Query.query(Criteria.where("id").is(id)), Invoice.class);
+        Invoice invoice = null;
+        try {
+            invoice = mongoTemplate.findAndRemove(Query.query(Criteria.where("id").is(id)), Invoice.class);
+        } catch (Exception e) {
+            throw new DatabaseOperationException();
+        }
         if (invoice == null) {
             throw new DatabaseOperationException(String.format("There is no invoice with id: %s", id));
         }
@@ -110,7 +130,11 @@ public class MongoDatabase implements Database {
 
     @Override
     public void deleteAll() throws DatabaseOperationException {
-        mongoTemplate.dropCollection(Invoice.class);
+        try {
+            mongoTemplate.dropCollection(Invoice.class);
+        } catch (Exception e) {
+            throw new DatabaseOperationException();
+        }
     }
 
     @Override
@@ -118,11 +142,19 @@ public class MongoDatabase implements Database {
         if (id == null) {
             throw new IllegalArgumentException("Id cannot be null");
         }
-        return mongoTemplate.exists(Query.query(Criteria.where("id").is(id)), Invoice.class);
+        try {
+            return mongoTemplate.exists(Query.query(Criteria.where("id").is(id)), Invoice.class);
+        } catch (Exception e) {
+            throw new DatabaseOperationException();
+        }
     }
 
     @Override
     public long count() throws DatabaseOperationException {
-        return mongoTemplate.count(new Query(), Invoice.class);
+        try {
+            return mongoTemplate.count(new Query(), Invoice.class);
+        } catch (Exception e) {
+            throw new DatabaseOperationException();
+        }
     }
 }

@@ -9,7 +9,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -30,6 +29,7 @@ public final class Invoice implements Serializable {
 
     @ApiModelProperty(value = "The unique identifier of the invoice", position = -1, dataType = "Long")
     @Id
+    @org.springframework.data.annotation.Id
     @JsonIgnore
     private String mongoId;
     @Indexed(unique = true)
@@ -99,10 +99,6 @@ public final class Invoice implements Serializable {
 
     public String getMongoId() {
         return mongoId;
-    }
-
-    public void setMongoId(String mongoId) {
-        this.mongoId = mongoId;
     }
 
     public Long getId() {
