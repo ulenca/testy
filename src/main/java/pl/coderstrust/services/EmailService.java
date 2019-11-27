@@ -1,5 +1,7 @@
 package pl.coderstrust.services;
 
+import pl.coderstrust.model.Invoice;
+
 public interface EmailService {
-    void sendSimpleMessage(String to, String from, String subject, String text);
+    void sendSimpleMessage(Invoice invoice);
 }

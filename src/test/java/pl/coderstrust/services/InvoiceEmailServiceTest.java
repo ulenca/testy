@@ -27,6 +27,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import pl.coderstrust.generators.InvoiceGenerator;
+import pl.coderstrust.model.Invoice;
 
 @EnableAutoConfiguration
 @SpringBootTest(classes = {InvoiceEmailService.class})
@@ -62,39 +64,21 @@ public class InvoiceEmailServiceTest {
     @Test
     public void shouldSendEmail() throws MessagingException {
 
-        String to = "to@localhost.com";
-        String from = "from@localhost.com";
-        String subject = "New invoice added";
-        String body = "Invoice data";
+        Invoice invoice = InvoiceGenerator.generateRandomInvoice();
 
-        emailService.sendSimpleMessage(to, from, subject, body);
+        emailService.sendSimpleMessage(invoice);
 
         assertTrue(server.waitForIncomingEmail(5000, 1));
         MimeMessage[] messages = server.getReceivedMessages();
         assertEquals(1, messages.length);
-        assertEquals(subject, messages[0].getSubject());
+        assertEquals(environment.getProperty("spring.mail.properties.subject"), messages[0].getSubject());
         String emailBody = GreenMailUtil.getBody(messages[0]).replaceAll("=\r?\n", "");
-        assertEquals(body, emailBody);
+        assertEquals("", emailBody);
     }
 
     @Test
-    public void shouldThrowIllegalArgumentExceptionWhenReciepientIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> emailService.sendSimpleMessage(null, "From", "Subject", "Text"));
-    }
-
-    @Test
-    public void shouldThrowIllegalArgumentExceptionWhenSenderIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> emailService.sendSimpleMessage("To", null, "Subject", "Text"));
-    }
-
-    @Test
-    public void shouldThrowIllegalArgumentExceptionWhenSubjectIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> emailService.sendSimpleMessage("To", "From", null, "Text"));
-    }
-
-    @Test
-    public void shouldThrowIllegalArgumentExceptionWhenTextIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> emailService.sendSimpleMessage(null, "From", "Subject", null));
+    public void shouldThrowIllegalArgumentExceptionWhenInvoiceIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> emailService.sendSimpleMessage(null));
     }
 
 }
