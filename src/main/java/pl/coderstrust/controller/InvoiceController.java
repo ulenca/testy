@@ -2,6 +2,7 @@ package pl.coderstrust.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -38,10 +39,13 @@ public class InvoiceController {
     @ApiOperation(value = "Add new invoice",
             notes = "Add new invoice to database",
             response = Invoice.class)
-    @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid ID supplied"),
-            @ApiResponse(code = 409, message = "Conflict"),
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "Created", response = Invoice.class),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 406, message = "Not acceptable format"),
+            @ApiResponse(code = 409, message = "Invoice exists"),
             @ApiResponse(code = 500, message = "Internal server error")})
-    @ApiImplicitParam(name = "Invoice", required = true, dataType = "Invoice")
+    @ApiImplicitParam(required = true, name = "invoice", value = "New invoice data", dataType = "Invoice")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> add(@RequestBody(required = false) Invoice invoice) {
         if (invoice == null) {
@@ -58,10 +62,11 @@ public class InvoiceController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get all invoices",
-            notes = "Get all invoices from database",
-            response = Invoice.class)
-    @ApiResponse(code = 500, message = "Internal server error")
+    @ApiOperation(value = "Get all invoices", notes = "Get all invoices from database", response = Invoice[].class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK", response = Invoice[].class),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAll() {
         try {
@@ -75,9 +80,11 @@ public class InvoiceController {
     @ApiOperation(value = "Get invoice by ID",
             notes = "Get invoice from database by ID",
             response = Invoice.class)
-    @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid ID supplied"),
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK", response = Invoice.class),
             @ApiResponse(code = 404, message = "Invoice not found"),
             @ApiResponse(code = 500, message = "Internal server error")})
+    @ApiImplicitParam(required = true, name = "id", value = "Id of the invoice to get", dataType = "Long")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getById(@PathVariable("id") Long id) {
         if (id == null) {
@@ -98,9 +105,12 @@ public class InvoiceController {
     @ApiOperation(value = "Get invoice by number",
             notes = "Get invoice from database by number",
             response = Invoice.class)
-    @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid number supplied"),
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK", response = Invoice.class),
+            @ApiResponse(code = 400, message = "Bad request"),
             @ApiResponse(code = 404, message = "Invoice not found"),
             @ApiResponse(code = 500, message = "Internal server error")})
+    @ApiImplicitParam(required = true, name = "number", value = "Number of the invoice to get", dataType = "String")
     @GetMapping(value = "/byNumber", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getByNumber(@RequestParam(required = false) String number) {
         if (number == null) {
@@ -119,11 +129,17 @@ public class InvoiceController {
 
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Update invoice",
-            notes = "Update invoice by ID",
+            notes = "Update invoice with provided id",
             response = Invoice.class)
-    @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid invoice supplied"),
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Updated", response = Invoice.class),
             @ApiResponse(code = 404, message = "Invoice not found"),
+            @ApiResponse(code = 406, message = "Not acceptable format"),
             @ApiResponse(code = 500, message = "Internal server error")
+    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(required = true, name = "id", value = "Id of invoice to update", dataType = "Long"),
+            @ApiImplicitParam(required = true, name = "invoice", value = "Invoice with updated data", dataType = "Invoice")
     })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody(required = false) Invoice invoice) {
@@ -145,9 +161,10 @@ public class InvoiceController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiOperation(value = "Remove invoice",
-            notes = "Remove invoice by ID",
-            response = Invoice.class)
-    @ApiResponses(value = {@ApiResponse(code = 404, message = "Invoice not found"),
+            notes = "Remove invoice by ID")
+    @ApiResponses({
+            @ApiResponse(code = 202, message = "Removed"),
+            @ApiResponse(code = 404, message = "Invoice not found"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @DeleteMapping("/{id}")
@@ -165,9 +182,11 @@ public class InvoiceController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiOperation(value = "Remove all invoices",
-            notes = "Remove all invoices from database",
-            response = Invoice.class)
-    @ApiResponse(code = 500, message = "Internal server error")
+            notes = "Remove all invoices from database")
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "Removed"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @DeleteMapping
     public ResponseEntity<?> removeAll() {
         try {

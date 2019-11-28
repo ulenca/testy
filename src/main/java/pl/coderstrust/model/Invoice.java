@@ -21,7 +21,7 @@ import javax.persistence.ManyToOne;
 @Entity
 public final class Invoice {
 
-    @ApiModelProperty(position = -1, required = true, example = "1L", dataType = "Long")
+    @ApiModelProperty(value = "The unique identifier of the invoice", position = -1, dataType = "Long")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private final Long id;
@@ -43,10 +43,6 @@ public final class Invoice {
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private final List<InvoiceEntry> entries;
-
-    private final String number;
-    private final LocalDate issuedDate;
-    private final LocalDate dueDate;
 
     private Invoice() {
         id = null;
@@ -195,5 +191,4 @@ public final class Invoice {
             return new Invoice(this);
         }
     }
-
 }

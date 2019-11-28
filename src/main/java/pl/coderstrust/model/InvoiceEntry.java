@@ -21,13 +21,13 @@ public final class InvoiceEntry {
     private final Long id;
     @ApiModelProperty(value = "Invoice entry description", required = true, example = "Buying some material")
     private final String description;
-    @ApiModelProperty(value = "Quantity of invoices", required = true, example = "1L")
+    @ApiModelProperty(value = "Number of units of the entry", required = true, example = "1L")
     private final long quantity;
-    @ApiModelProperty(value = "Price of invoice ", required = true, example = "100")
+    @ApiModelProperty(value = "Unit price of the entry", required = true, example = "100")
     private final BigDecimal price;
-    @ApiModelProperty(value = "Net value of invoice ", required = true, example = "23")
+    @ApiModelProperty(value = "Price without tax", required = true, example = "23")
     private final BigDecimal netValue;
-    @ApiModelProperty(value = "Gross of invoice ", required = true, example = "123")
+    @ApiModelProperty(value = "Price with tax", required = true, example = "123")
     private final BigDecimal grossValue;
     @ApiModelProperty(value = "Vat rate")
     private final Vat vatRate;

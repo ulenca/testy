@@ -31,7 +31,7 @@ public class SwaggerConfiguration {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Invoice Service")
-                .description("This application is created to handle with invoices")
+                .description("Service providing basic operations on Vat Invoices.")
                 .contact(new Contact("Urszula, Tomasz, Andrzej","https://coderstrust.pl","hello@coderstrust.pl"))
                 .version("1.0")
                 .build();

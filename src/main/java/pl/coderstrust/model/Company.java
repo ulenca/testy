@@ -14,9 +14,9 @@ import javax.persistence.Id;
 @Entity
 public final class Company {
 
+    @ApiModelProperty(value = "The unique identifier of the company.", position = -1, dataType = "Long")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @ApiModelProperty(position = -1, required = true, example = "1L", dataType = "Long")
     private final Long id;
     @ApiModelProperty(value = "Company name", required = true, example = "Coca-Cola")
     private final String name;
