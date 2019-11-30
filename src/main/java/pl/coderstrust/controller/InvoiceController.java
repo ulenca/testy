@@ -163,7 +163,7 @@ public class InvoiceController {
     @ApiOperation(value = "Remove invoice",
             notes = "Remove invoice by ID")
     @ApiResponses({
-            @ApiResponse(code = 202, message = "Removed"),
+            @ApiResponse(code = 204, message = "Removed"),
             @ApiResponse(code = 404, message = "Invoice not found"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
