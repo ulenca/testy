@@ -4,10 +4,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
-import org.springframework.stereotype.Repository;
 import pl.coderstrust.model.Invoice;
 
-@Repository
 public class InMemoryDatabase implements Database {
 
     private Map<Long, Invoice> storage;

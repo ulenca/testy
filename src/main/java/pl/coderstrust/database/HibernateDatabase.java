@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Example;
 import pl.coderstrust.model.Invoice;
 
+//@ConditionalOnProperty(name ="pl.coderstrust.database", havingValue = "hibernate")
 public class HibernateDatabase implements Database {
 
     private final InvoiceRepository repository;
