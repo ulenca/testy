@@ -1,12 +1,8 @@
 package pl.coderstrust.services;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import pl.coderstrust.database.Database;
 import pl.coderstrust.database.DatabaseOperationException;
