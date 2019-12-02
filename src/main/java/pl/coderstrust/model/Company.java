@@ -28,7 +28,7 @@ public final class Company {
     private final String accountNumber;
     @ApiModelProperty(value = "Company phone number", required = true, example = "123 456 789")
     private final String phoneNumber;
-    @ApiModelProperty(value = "Company email address", required = true, example ="someAddress@gmail.com")
+    @ApiModelProperty(value = "Company email address", required = true, example = "someAddress@gmail.com")
     private final String email;
 
     private Company() {
