@@ -51,6 +51,7 @@ class InFileDatabaseTest {
 
     @Test
     void getByIdMethodShouldThrowExceptionForNullAsId() {
+        assertThrows(IllegalArgumentException.class, () -> database.getById(null));
     }
 
     @Test
@@ -123,6 +124,7 @@ class InFileDatabaseTest {
 
     @Test
     void countMethodShouldThrowExceptionWhenAnErrorOccurDuringCountingInvoices() {
+
     }
 
     @Test
