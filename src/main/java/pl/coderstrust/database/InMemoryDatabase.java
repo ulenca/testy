@@ -4,15 +4,19 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 import pl.coderstrust.model.Invoice;
 
+@ConditionalOnProperty(name = "pl.coderstrust.database", havingValue = "in-memory")
 @Repository
 public class InMemoryDatabase implements Database {
 
     private Map<Long, Invoice> storage;
     private AtomicLong nextId = new AtomicLong(1);
 
+    @Autowired
     public InMemoryDatabase(Map<Long, Invoice> storage) {
         this.storage = storage;
     }
