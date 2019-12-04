@@ -21,7 +21,7 @@ public class SwaggerConfiguration {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
-                .paths(PathSelectors.ant("/Invoices/**"))
+                .paths(PathSelectors.ant("/invoices/**"))
                 .build()
                 .consumes(Collections.singleton("application/json"))
                 .produces(Collections.singleton("application/json"))

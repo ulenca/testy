@@ -13,7 +13,6 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 
-//@ConditionalOnProperty(name ="pl.coderstrust.database", havingValue = "in-file")
 public class FileHelper {
 
     private static final Charset ENCODING = UTF_8;
