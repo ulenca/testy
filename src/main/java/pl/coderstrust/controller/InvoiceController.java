@@ -29,6 +29,7 @@ import pl.coderstrust.services.ServiceOperationException;
 @Api(value = "/invoices")
 public class InvoiceController {
 
+    //    @Autowired
     private InvoiceService invoiceService;
 
     public InvoiceController(InvoiceService invoiceService) {
