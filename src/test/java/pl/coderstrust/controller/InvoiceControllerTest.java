@@ -30,7 +30,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.coderstrust.generators.InvoiceGenerator;
 import pl.coderstrust.model.Invoice;
-import pl.coderstrust.services.EmailService;
+import pl.coderstrust.services.InvoiceEmailService;
 import pl.coderstrust.services.InvoiceService;
 
 import pl.coderstrust.services.ServiceOperationException;
@@ -50,7 +50,7 @@ public class InvoiceControllerTest {
     private InvoiceService invoiceService;
 
     @MockBean
-    private EmailService emailService;
+    private InvoiceEmailService emailService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -95,7 +95,7 @@ public class InvoiceControllerTest {
         Invoice addedInvoice = InvoiceGenerator.generateRandomInvoice();
         doReturn(false).when(invoiceService).invoiceExists(invoiceToAdd.getId());
         doReturn(addedInvoice).when(invoiceService).addInvoice(invoiceToAdd);
-        doNothing().when(emailService).sendSimpleMessage(addedInvoice);
+        doNothing().when(emailService).sendEmailWithInvoice(addedInvoice);
 
         mockMvc.perform(
                 post("/invoices")
@@ -107,7 +107,7 @@ public class InvoiceControllerTest {
 
         verify(invoiceService).addInvoice(invoiceToAdd);
         verify(invoiceService).invoiceExists(invoiceToAdd.getId());
-        verify(emailService).sendSimpleMessage(addedInvoice);
+        verify(emailService).sendEmailWithInvoice(addedInvoice);
     }
 
     @Test

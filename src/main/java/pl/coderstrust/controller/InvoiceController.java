@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pl.coderstrust.model.Invoice;
-import pl.coderstrust.services.EmailService;
+import pl.coderstrust.services.InvoiceEmailService;
 import pl.coderstrust.services.InvoiceService;
 import pl.coderstrust.services.ServiceOperationException;
 
@@ -32,8 +32,9 @@ import pl.coderstrust.services.ServiceOperationException;
 public class InvoiceController {
 
     private InvoiceService invoiceService;
-    private EmailService emailService;
+    private InvoiceEmailService emailService;
 
+    public InvoiceController(InvoiceService invoiceService, InvoiceEmailService emailService) {
     public InvoiceController(InvoiceService invoiceService, EmailService emailService) {
     @Autowired
     public InvoiceController(InvoiceService invoiceService) {
@@ -62,7 +63,7 @@ public class InvoiceController {
                 return new ResponseEntity<>(HttpStatus.CONFLICT);
             }
             Invoice addedInvoice = invoiceService.addInvoice(invoice);
-            emailService.sendSimpleMessage(addedInvoice);
+            emailService.sendEmailWithInvoice(addedInvoice);
             return new ResponseEntity<>(addedInvoice, HttpStatus.CREATED);
         } catch (ServiceOperationException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
