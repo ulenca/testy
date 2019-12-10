@@ -54,7 +54,7 @@ public final class Invoice {
         dueDate = null;
     }
 
-    private Invoice(Invoice.InvoiceBuilder builder) {
+    private Invoice(InvoiceBuilder builder) {
         id = builder.id;
         number = builder.number;
         issuedDate = builder.issuedDate;
@@ -64,8 +64,8 @@ public final class Invoice {
         entries = builder.entries;
     }
 
-    public static Invoice.InvoiceBuilder builder() {
-        return new Invoice.InvoiceBuilder();
+    public static InvoiceBuilder builder() {
+        return new InvoiceBuilder();
     }
 
     public Long getId() {
@@ -84,7 +84,9 @@ public final class Invoice {
         return dueDate;
     }
 
-    public Company getBuyer() {return buyer;}
+    public Company getBuyer() {
+        return buyer;
+    }
 
     public Company getSeller() {
         return seller;
@@ -104,12 +106,12 @@ public final class Invoice {
         }
         Invoice invoice = (Invoice) o;
         return id.equals(invoice.id)
-                && number.equals(invoice.number)
-                && issuedDate.equals(invoice.issuedDate)
-                && dueDate.equals(invoice.dueDate)
-                && seller.equals(invoice.seller)
-                && buyer.equals(invoice.buyer)
-                && entries.equals(invoice.entries);
+            && number.equals(invoice.number)
+            && issuedDate.equals(invoice.issuedDate)
+            && dueDate.equals(invoice.dueDate)
+            && seller.equals(invoice.seller)
+            && buyer.equals(invoice.buyer)
+            && entries.equals(invoice.entries);
     }
 
     @Override
@@ -120,14 +122,14 @@ public final class Invoice {
     @Override
     public String toString() {
         return "Invoice{"
-                + "id='" + id + '\''
-                + ", number='" + number + '\''
-                + ", issuedDate=" + issuedDate
-                + ", dueDate=" + dueDate
-                + ", seller=" + seller
-                + ", buyer=" + buyer
-                + ", entries=" + entries
-                + '}';
+            + "id='" + id + '\''
+            + ", number='" + number + '\''
+            + ", issuedDate=" + issuedDate
+            + ", dueDate=" + dueDate
+            + ", seller=" + seller
+            + ", buyer=" + buyer
+            + ", entries=" + entries
+            + '}';
     }
 
     public static final class InvoiceBuilder {
@@ -139,7 +141,7 @@ public final class Invoice {
         private Company buyer;
         private List<InvoiceEntry> entries;
 
-        public Invoice.InvoiceBuilder withInvoice(Invoice invoice) {
+        public InvoiceBuilder withInvoice(Invoice invoice) {
             this.id = invoice.id;
             this.number = invoice.number;
             this.issuedDate = invoice.issuedDate;
@@ -150,37 +152,37 @@ public final class Invoice {
             return this;
         }
 
-        public Invoice.InvoiceBuilder withId(Long id) {
+        public InvoiceBuilder withId(Long id) {
             this.id = id;
             return this;
         }
 
-        public Invoice.InvoiceBuilder withNumber(String number) {
+        public InvoiceBuilder withNumber(String number) {
             this.number = number;
             return this;
         }
 
-        public Invoice.InvoiceBuilder withIssuedDate(LocalDate issuedDate) {
+        public InvoiceBuilder withIssuedDate(LocalDate issuedDate) {
             this.issuedDate = issuedDate;
             return this;
         }
 
-        public Invoice.InvoiceBuilder withDueDate(LocalDate dueDate) {
+        public InvoiceBuilder withDueDate(LocalDate dueDate) {
             this.dueDate = dueDate;
             return this;
         }
 
-        public Invoice.InvoiceBuilder withSeller(Company seller) {
+        public InvoiceBuilder withSeller(Company seller) {
             this.seller = seller;
             return this;
         }
 
-        public Invoice.InvoiceBuilder withBuyer(Company buyer) {
+        public InvoiceBuilder withBuyer(Company buyer) {
             this.buyer = buyer;
             return this;
         }
 
-        public Invoice.InvoiceBuilder withEntries(List<InvoiceEntry> entries) {
+        public InvoiceBuilder withEntries(List<InvoiceEntry> entries) {
             this.entries = entries;
             return this;
         }
