@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pl.coderstrust.model.Invoice;
 import pl.coderstrust.services.InvoiceEmailService;
+import pl.coderstrust.services.InvoicePdfService;
 import pl.coderstrust.services.InvoiceService;
 import pl.coderstrust.services.ServiceOperationException;
 
@@ -31,12 +33,14 @@ import pl.coderstrust.services.ServiceOperationException;
 @Api(value = "/invoices")
 public class InvoiceController {
 
+    private final InvoicePdfService invoicePdfService;
     private InvoiceService invoiceService;
     private InvoiceEmailService emailService;
 
     @Autowired
-    public InvoiceController(InvoiceService invoiceService, InvoiceEmailService emailService) {
+    public InvoiceController(InvoiceService invoiceService, InvoicePdfService invoicePdfService, InvoiceService invoiceService, InvoiceEmailService emailService) {
         this.invoiceService = invoiceService;
+        this.invoicePdfService = invoicePdfService;
         this.emailService = emailService;
     }
 
@@ -101,6 +105,37 @@ public class InvoiceController {
             Optional<Invoice> invoice = invoiceService.getById(id);
             if (invoice.isPresent()) {
                 return new ResponseEntity<>(invoice.get(), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (ServiceOperationException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get by ID as PDF",
+            notes = "Get invoice from database by ID as PDF file",
+            response = Invoice.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK", response = Invoice.class),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 404, message = "Invoice not found"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+    @ApiImplicitParam(required = true, name = "id", value = "ID of the invoice to get", dataType = "Long")
+    @GetMapping(value = "/pdf/{id}", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<?> getByIdAsPdf(@PathVariable("id") Long id) {
+        if (id == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        try {
+            Optional<Invoice> invoice = invoiceService.getById(id);
+
+            if (invoice.isPresent()) {
+                byte[] invoiceAsPdf = invoicePdfService.createPdf(invoice.get());
+                HttpHeaders httpHeaders = new HttpHeaders();
+                httpHeaders.setContentType(MediaType.APPLICATION_PDF);
+                return new ResponseEntity<>(invoiceAsPdf, httpHeaders, HttpStatus.OK);
             }
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (ServiceOperationException e) {
