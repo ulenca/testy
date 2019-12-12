@@ -45,7 +45,6 @@ public class InvoiceEmailServiceImplTest {
         server = new GreenMail(setup);
         server.setUser(mailProperties.getUsername(), mailProperties.getUsername(), mailProperties.getPassword());
         server.start();
-        System.out.println("Greenmail server started");
     }
 
     @AfterEach
