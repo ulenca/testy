@@ -25,6 +25,9 @@ public class InvoicePdfService {
     private static final String NEW_LINE = "\n";
 
     public byte[] createPdf(Invoice invoice) throws ServiceOperationException {
+        if (invoice == null) {
+            throw new IllegalArgumentException("Invoice cannot be null");
+        }
         try {
             Document document = new Document();
             ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
@@ -38,7 +41,7 @@ public class InvoicePdfService {
             document.add(getTotalValueOfInvoice(invoice.getEntries()));
             document.close();
             return byteStream.toByteArray();
-        } catch ( DocumentException e) {
+        } catch (DocumentException e) {
             throw new ServiceOperationException("An error occurred during creating pdf", e);
         }
     }

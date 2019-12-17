@@ -98,9 +98,6 @@ public class InvoiceController {
     @ApiImplicitParam(required = true, name = "id", value = "Id of the invoice to get", dataType = "Long")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getById(@PathVariable("id") Long id) {
-        if (id == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
         try {
             Optional<Invoice> invoice = invoiceService.getById(id);
             if (invoice.isPresent()) {
@@ -125,12 +122,8 @@ public class InvoiceController {
     @ApiImplicitParam(required = true, name = "id", value = "ID of the invoice to get", dataType = "Long")
     @GetMapping(value = "/pdf/{id}", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<?> getByIdAsPdf(@PathVariable("id") Long id) {
-        if (id == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
         try {
             Optional<Invoice> invoice = invoiceService.getById(id);
-
             if (invoice.isPresent()) {
                 byte[] invoiceAsPdf = invoicePdfService.createPdf(invoice.get());
                 HttpHeaders httpHeaders = new HttpHeaders();

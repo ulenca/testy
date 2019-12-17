@@ -15,13 +15,13 @@ import javax.persistence.Id;
 @Entity
 public final class InvoiceEntry {
 
-    @ApiModelProperty(position = -1, required = true, example = "1L", dataType = "Long")
+    @ApiModelProperty(position = -1, required = true, example = "1", dataType = "Long")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private final Long id;
     @ApiModelProperty(value = "Invoice entry description", required = true, example = "Buying some material")
     private final String description;
-    @ApiModelProperty(value = "Number of units of the entry", required = true, example = "1L")
+    @ApiModelProperty(value = "Number of units of the entry", required = true, example = "1")
     private final long quantity;
     @ApiModelProperty(value = "Unit price of the entry", required = true, example = "100")
     private final BigDecimal price;
@@ -29,7 +29,7 @@ public final class InvoiceEntry {
     private final BigDecimal netValue;
     @ApiModelProperty(value = "Price with tax", required = true, example = "123")
     private final BigDecimal grossValue;
-    @ApiModelProperty(value = "Vat rate")
+    @ApiModelProperty(value = "Vat rate", required = true, example = "VAT_23")
     private final Vat vatRate;
 
     private InvoiceEntry() {

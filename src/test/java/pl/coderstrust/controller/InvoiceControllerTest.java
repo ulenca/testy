@@ -30,9 +30,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.coderstrust.generators.InvoiceGenerator;
 import pl.coderstrust.model.Invoice;
-import pl.coderstrust.services.InvoiceEmailService;
+import pl.coderstrust.services.InvoicePdfService;
 import pl.coderstrust.services.InvoiceService;
-
 import pl.coderstrust.services.ServiceOperationException;
 
 @ExtendWith(SpringExtension.class)
@@ -48,6 +47,9 @@ public class InvoiceControllerTest {
 
     @MockBean
     private InvoiceService invoiceService;
+
+    @MockBean
+    private InvoicePdfService pdfService;
 
     @MockBean
     private InvoiceEmailService emailService;
@@ -184,11 +186,11 @@ public class InvoiceControllerTest {
     }
 
     @Test
-    public void  shouldReturnInvoiceByNumber() throws Exception {
+    public void shouldReturnInvoiceByNumber() throws Exception {
         Invoice invoiceToReturn = InvoiceGenerator.generateRandomInvoice();
         doReturn(Optional.of(invoiceToReturn)).when(invoiceService).getByNumber(invoiceToReturn.getNumber());
 
-        mockMvc.perform(get("/invoices/byNumber?number={number}",invoiceToReturn.getNumber()))
+        mockMvc.perform(get("/invoices/byNumber?number={number}", invoiceToReturn.getNumber()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(invoiceToReturn)));
 
@@ -362,5 +364,42 @@ public class InvoiceControllerTest {
                 .andExpect(status().isInternalServerError());
 
         verify(invoiceService).deleteAllInvoices();
+    }
+
+    @Test
+    public void shouldReturnInvoiceAsPdf() throws Exception {
+        Invoice invoice = InvoiceGenerator.generateRandomInvoice();
+        doReturn(Optional.of(invoice)).when(invoiceService).getById(invoice.getId());
+        byte[] invoiceAsPdf = "blablabla".getBytes();
+        doReturn(invoiceAsPdf).when(pdfService).createPdf(invoice);
+
+        mockMvc.perform(get("/invoices/pdf/{id}", invoice.getId()))
+                .andExpect(content().bytes(invoiceAsPdf))
+                .andExpect(content().contentType(MediaType.APPLICATION_PDF))
+                .andExpect(status().isOk());
+
+        verify(invoiceService).getById(invoice.getId());
+        verify(pdfService).createPdf(invoice);
+    }
+
+    @Test
+    public void shouldThrownExceptionForNullAsInvoice() throws Exception {
+        doThrow(new ServiceOperationException()).when(invoiceService).getById(1L);
+
+        mockMvc.perform(
+                get("/invoices/pdf/1"))
+                .andExpect(status().isInternalServerError());
+
+        verify(invoiceService).getById(1L);
+    }
+
+    @Test
+    public void shouldReturnNotFoundStatusDuringGettingInvoiceAsPdf() throws Exception {
+        doReturn(Optional.empty()).when(invoiceService).getById(1L);
+
+        mockMvc.perform(get("/invoices/pdf/1"))
+                .andExpect(status().isNotFound());
+
+        verify(invoiceService).getById(1L);
     }
 }

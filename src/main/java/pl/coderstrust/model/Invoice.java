@@ -27,9 +27,9 @@ public final class Invoice {
     private final Long id;
     @ApiModelProperty(value = "Invoice number", required = true, example = "180213-002")
     private final String number;
-    @ApiModelProperty(value = "Invoice issued data", required = true, example = "12/12/2019")
+    @ApiModelProperty(value = "Invoice issued data", required = true, example = "2019-07-16")
     private final LocalDate issuedDate;
-    @ApiModelProperty(value = "Invoice due data", required = true, example = "11/12/2019")
+    @ApiModelProperty(value = "Invoice due data", required = true, example = "2019-07-16")
     private final LocalDate dueDate;
     @ApiModelProperty(value = "Seller data")
 
