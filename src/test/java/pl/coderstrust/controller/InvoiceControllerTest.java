@@ -30,6 +30,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.coderstrust.generators.InvoiceGenerator;
 import pl.coderstrust.model.Invoice;
+import pl.coderstrust.services.InvoiceEmailService;
 import pl.coderstrust.services.InvoicePdfService;
 import pl.coderstrust.services.InvoiceService;
 import pl.coderstrust.services.ServiceOperationException;

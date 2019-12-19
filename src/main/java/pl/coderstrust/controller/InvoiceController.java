@@ -38,7 +38,7 @@ public class InvoiceController {
     private InvoiceEmailService emailService;
 
     @Autowired
-    public InvoiceController(InvoiceService invoiceService, InvoicePdfService invoicePdfService, InvoiceService invoiceService, InvoiceEmailService emailService) {
+    public InvoiceController(InvoiceService invoiceService, InvoicePdfService invoicePdfService, InvoiceEmailService emailService) {
         this.invoiceService = invoiceService;
         this.invoicePdfService = invoicePdfService;
         this.emailService = emailService;
