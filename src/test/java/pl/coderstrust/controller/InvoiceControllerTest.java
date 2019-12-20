@@ -384,7 +384,7 @@ public class InvoiceControllerTest {
     }
 
     @Test
-    public void shouldThrownExceptionForNullAsInvoice() throws Exception {
+    public void shouldReturnInternalServerErrorStatusDuringGettingInvoiceAsPdfWhenSomethingWentWrongOnServer() throws Exception {
         doThrow(new ServiceOperationException()).when(invoiceService).getById(1L);
 
         mockMvc.perform(
@@ -392,6 +392,7 @@ public class InvoiceControllerTest {
                 .andExpect(status().isInternalServerError());
 
         verify(invoiceService).getById(1L);
+        verify(pdfService, never()).createPdf(any());
     }
 
     @Test

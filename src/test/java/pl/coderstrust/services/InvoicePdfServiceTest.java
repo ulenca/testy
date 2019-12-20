@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.Test;
 import pl.coderstrust.generators.InvoiceGenerator;
 import pl.coderstrust.model.Invoice;
@@ -12,9 +11,10 @@ import pl.coderstrust.model.Invoice;
 class InvoicePdfServiceTest {
 
     @Test
-    public void shouldReturnByteArray() throws ServiceOperationException {
+    public void shouldReturnPdfForPassedInvoice() throws ServiceOperationException {
         InvoicePdfService invoicePdfService = new InvoicePdfService();
         Invoice invoice = InvoiceGenerator.generateRandomInvoice();
+
         byte[] result = invoicePdfService.createPdf(invoice);
 
         assertNotNull(result);

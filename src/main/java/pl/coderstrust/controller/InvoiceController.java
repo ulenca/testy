@@ -115,7 +115,6 @@ public class InvoiceController {
             response = Invoice.class)
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = Invoice.class),
-            @ApiResponse(code = 400, message = "Bad request"),
             @ApiResponse(code = 404, message = "Invoice not found"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
