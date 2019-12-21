@@ -396,12 +396,13 @@ public class InvoiceControllerTest {
     }
 
     @Test
-    public void shouldReturnNotFoundStatusDuringGettingInvoiceAsPdf() throws Exception {
+    public void shouldReturnNotFoundStatusDuringGettingInvoiceAsPdfWhenInvoiceWithSpecificIdDoesNotExist() throws Exception {
         doReturn(Optional.empty()).when(invoiceService).getById(1L);
 
         mockMvc.perform(get("/invoices/pdf/1"))
                 .andExpect(status().isNotFound());
 
         verify(invoiceService).getById(1L);
+        verify(pdfService, never()).createPdf(any());
     }
 }
