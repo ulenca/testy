@@ -1,0 +1,20 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Number</th>
+      <th scope="col">Seller</th>
+      <th scope="col">Buyer</th>
+      <th scope="col">Issued date</th>
+      <th scope="col">Due date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let invoice of Invoice">
+      <td>{{invoice.number}}</td>
+      <td>{{invoice.seller.name}}</td>
+      <td>{{invoice.buyer.name}}</td>
+      <td>{{invoice.issuedDate}}</td>
+      <td>{{invoice.dueDate}}</td>
+    </tr>
+  </tbody>
+</table>
