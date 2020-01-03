@@ -6,16 +6,17 @@ import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import pl.coderstrust.model.Invoice;
 
-@Mapper
-//@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface InvoiceMapper {
 
     InvoiceMapper INVOICE_MAPPER_INSTANCE = Mappers.getMapper(InvoiceMapper.class);
 
-    @Mapping(target = "withNumber", source = "number")
-    @Mapping(target = "withId", constant = "OL")
+    //@Mapping(target = "withNumber", source = "number")
+    //@Mapping(target = "withId", numberFormat = "0L")
     InvoiceMongo invoiceToInvoiceMongo(Invoice invoice);
 
     Invoice invoiceMongoToInvoice(InvoiceMongo invoiceMongo);
