@@ -1,9 +1,11 @@
 package pl.coderstrust.services;
 
+import javax.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMailMessage;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import pl.coderstrust.model.Invoice;
@@ -25,7 +27,9 @@ public class InvoiceEmailServiceImpl implements InvoiceEmailService {
         if (invoice == null) {
             throw new IllegalArgumentException("Invoice cannot be null!");
         }
-        SimpleMailMessage message = new SimpleMailMessage();
+        MimeMessage message = new MimeMessage();
+        MimeMessageHelper messageHelper = new MimeMessageHelper();
+        // Poczytać dokumentacje od ww jak dodać załącznik do maila
         message.setTo(mailProperties.getProperties().get("to"));
         message.setFrom(mailProperties.getUsername());
         message.setSubject(mailProperties.getProperties().get("subject"));
