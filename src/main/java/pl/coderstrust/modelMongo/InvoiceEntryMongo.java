@@ -1,14 +1,11 @@
-package modelMongo;
+package pl.coderstrust.modelMongo;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.math.BigDecimal;
 import java.util.Objects;
 import org.springframework.data.annotation.PersistenceConstructor;
-import javax.persistence.Entity;
-import pl.coderstrust.model.Vat;
 
 @JsonDeserialize(builder = pl.coderstrust.model.InvoiceEntry.InvoiceEntryBuilder.class)
-@Entity
 public final class InvoiceEntryMongo {
 
     private final Long id;
@@ -17,10 +14,10 @@ public final class InvoiceEntryMongo {
     private final BigDecimal price;
     private final BigDecimal netValue;
     private final BigDecimal grossValue;
-    private final Vat vatRate;
+    private final VatMongo vatRate;
 
     @PersistenceConstructor
-    private InvoiceEntryMongo(Long id, String description, long quantity, BigDecimal price, BigDecimal netValue, BigDecimal grossValue, Vat vatRate) {
+    private InvoiceEntryMongo(Long id, String description, long quantity, BigDecimal price, BigDecimal netValue, BigDecimal grossValue, VatMongo vatRate) {
         this.id = id;
         this.description = description;
         this.quantity = quantity;
@@ -78,7 +75,7 @@ public final class InvoiceEntryMongo {
         return grossValue;
     }
 
-    public Vat getVatRate() {
+    public VatMongo getVatRate() {
         return vatRate;
     }
 
@@ -125,7 +122,7 @@ public final class InvoiceEntryMongo {
         private BigDecimal price;
         private BigDecimal netValue;
         private BigDecimal grossValue;
-        private Vat vatRate;
+        private VatMongo vatRate;
 
         public InvoiceEntryBuilder withInvoiceEntryMongo(InvoiceEntryMongo invoiceEntry) {
             this.id = invoiceEntry.id;
@@ -168,7 +165,7 @@ public final class InvoiceEntryMongo {
             return this;
         }
 
-        public InvoiceEntryBuilder withVatRate(Vat vatRate) {
+        public InvoiceEntryBuilder withVatRate(VatMongo vatRate) {
             this.vatRate = vatRate;
             return this;
         }

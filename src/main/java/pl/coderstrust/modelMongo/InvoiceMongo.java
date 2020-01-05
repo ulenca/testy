@@ -1,4 +1,4 @@
-package modelMongo;
+package pl.coderstrust.modelMongo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

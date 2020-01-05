@@ -26,6 +26,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import pl.coderstrust.generators.InvoiceGenerator;
 import pl.coderstrust.model.Invoice;
+import pl.coderstrust.modelMongo.InvoiceMongo;
+import pl.coderstrust.modelMongo.mapper.InvoiceMapper;
 
 @ExtendWith(MockitoExtension.class)
 public class MongoDatabaseTest {

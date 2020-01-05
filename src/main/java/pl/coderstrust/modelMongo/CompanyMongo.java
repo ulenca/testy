@@ -1,12 +1,10 @@
-package modelMongo;
+package pl.coderstrust.modelMongo;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.Objects;
 import org.springframework.data.annotation.PersistenceConstructor;
-import javax.persistence.Entity;
 
 @JsonDeserialize(builder = CompanyMongo.CompanyBuilder.class)
-@Entity
 public final class CompanyMongo {
 
     private final Long id;

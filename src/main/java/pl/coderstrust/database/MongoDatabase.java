@@ -5,8 +5,8 @@ import java.util.Optional;
 
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
-import modelMongo.InvoiceMongo;
-import modelMongo.mapper.InvoiceMapper;
+import pl.coderstrust.modelMongo.InvoiceMongo;
+import pl.coderstrust.modelMongo.mapper.InvoiceMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -113,9 +113,7 @@ public class MongoDatabase implements Database {
     @Override
     public Collection<Invoice> getAll() throws DatabaseOperationException {
         try {
-            return mongoTemplate.findAll(InvoiceMongo.class).stream()
-                    .map(invoice -> invoiceMapper.invoiceMongoToInvoice(invoice))
-                    .collect(Collectors.toList());
+            return invoiceMapper.invoicesMongoToInvoices(mongoTemplate.findAll(InvoiceMongo.class));
         } catch (Exception e) {
             throw new DatabaseOperationException();
         }
