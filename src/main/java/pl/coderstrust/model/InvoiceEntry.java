@@ -3,6 +3,7 @@ package pl.coderstrust.model;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Entity;
@@ -13,7 +14,7 @@ import javax.persistence.Id;
 @ApiModel(value = "Invoice entry ")
 @JsonDeserialize(builder = InvoiceEntry.InvoiceEntryBuilder.class)
 @Entity
-public final class InvoiceEntry {
+public final class InvoiceEntry implements Serializable {
 
     @ApiModelProperty(position = -1, required = true, example = "1", dataType = "Long")
     @Id

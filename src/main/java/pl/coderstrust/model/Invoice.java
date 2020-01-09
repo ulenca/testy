@@ -3,6 +3,7 @@ package pl.coderstrust.model;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ import javax.persistence.ManyToOne;
 @ApiModel(value = "Invoice")
 @JsonDeserialize(builder = Invoice.InvoiceBuilder.class)
 @Entity
-public final class Invoice {
+public final class Invoice implements Serializable {
 
     @ApiModelProperty(value = "The unique identifier of the invoice", position = -1, dataType = "Long")
     @Id

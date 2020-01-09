@@ -3,6 +3,7 @@ package pl.coderstrust.model;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,7 +13,7 @@ import javax.persistence.Id;
 @ApiModel(value = "Company")
 @JsonDeserialize(builder = Company.CompanyBuilder.class)
 @Entity
-public final class Company {
+public final class Company implements Serializable {
 
     @ApiModelProperty(value = "The unique identifier of the company.", position = -1, dataType = "Long")
     @Id
