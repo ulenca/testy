@@ -30,7 +30,7 @@ import pl.coderstrust.services.InvoiceService;
 import pl.coderstrust.services.ServiceOperationException;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/invoices")
 @Api(value = "/invoices")
 public class InvoiceController {
