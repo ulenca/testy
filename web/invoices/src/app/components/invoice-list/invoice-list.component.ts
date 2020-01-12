@@ -21,5 +21,4 @@ export class InvoiceListComponent implements OnInit {
       this.Invoice = data;
     });
   }
-
 }
