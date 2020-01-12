@@ -4,9 +4,6 @@ import java.util.Collection;
 import java.util.Optional;
 
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
-import pl.coderstrust.modelMongo.InvoiceMongo;
-import pl.coderstrust.modelMongo.mapper.InvoiceMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -14,6 +11,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 import pl.coderstrust.model.Invoice;
+import pl.coderstrust.mongomodel.InvoiceMongo;
+import pl.coderstrust.mongomodel.mapper.InvoiceMapper;
 
 @Repository
 public class MongoDatabase implements Database {

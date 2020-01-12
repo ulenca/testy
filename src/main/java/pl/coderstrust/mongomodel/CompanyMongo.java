@@ -1,4 +1,4 @@
-package pl.coderstrust.modelMongo;
+package pl.coderstrust.mongomodel;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.Objects;
@@ -103,7 +103,7 @@ public final class CompanyMongo {
 
     @Override
     public String toString() {
-        return "Company{"
+        return "CompanyMongo{"
                 + "id='" + id + '\''
                 + ", name='" + name + '\''
                 + ", address='" + address + '\''

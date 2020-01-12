@@ -1,4 +1,4 @@
-package pl.coderstrust.modelMongo;
+package pl.coderstrust.mongomodel;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.math.BigDecimal;
@@ -84,7 +84,7 @@ public final class InvoiceEntryMongo {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof pl.coderstrust.model.InvoiceEntry)) {
+        if (!(o instanceof InvoiceEntryMongo)) {
             return false;
         }
         InvoiceEntryMongo entry = (InvoiceEntryMongo) o;
@@ -104,7 +104,7 @@ public final class InvoiceEntryMongo {
 
     @Override
     public String toString() {
-        return "InvoiceEntry{"
+        return "InvoiceEntryMongo{"
                 + "id='" + id + '\''
                 + ", description='" + description + '\''
                 + ", quantity=" + quantity

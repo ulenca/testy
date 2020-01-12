@@ -6,11 +6,11 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
-import org.springframework.data.annotation.PersistenceConstructor;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import org.springframework.data.annotation.PersistenceConstructor;
 
 @ApiModel(value = "Invoice entry ")
 @JsonDeserialize(builder = InvoiceEntry.InvoiceEntryBuilder.class)

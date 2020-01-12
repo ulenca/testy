@@ -5,11 +5,11 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.util.Objects;
-import org.springframework.data.annotation.PersistenceConstructor;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import org.springframework.data.annotation.PersistenceConstructor;
 
 @ApiModel(value = "Company")
 @JsonDeserialize(builder = Company.CompanyBuilder.class)

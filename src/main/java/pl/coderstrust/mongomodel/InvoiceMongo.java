@@ -1,4 +1,4 @@
-package pl.coderstrust.modelMongo;
+package pl.coderstrust.mongomodel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -6,8 +6,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -126,7 +126,7 @@ public final class InvoiceMongo {
 
     @Override
     public String toString() {
-        return "Invoice{"
+        return "InvoiceMongo{"
                 + "id='" + id + '\''
                 + ", number='" + number + '\''
                 + ", issuedDate=" + issuedDate

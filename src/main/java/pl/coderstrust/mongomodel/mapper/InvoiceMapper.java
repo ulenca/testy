@@ -1,16 +1,17 @@
-package pl.coderstrust.modelMongo.mapper;
+package pl.coderstrust.mongomodel.mapper;
 
 import java.util.Collection;
-import org.mapstruct.Mapping;
-import pl.coderstrust.model.Company;
-import pl.coderstrust.model.InvoiceEntry;
-import pl.coderstrust.modelMongo.CompanyMongo;
-import pl.coderstrust.modelMongo.InvoiceEntryMongo;
-import pl.coderstrust.modelMongo.InvoiceMongo;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
+import pl.coderstrust.model.Company;
 import pl.coderstrust.model.Invoice;
+import pl.coderstrust.model.InvoiceEntry;
+import pl.coderstrust.mongomodel.CompanyMongo;
+import pl.coderstrust.mongomodel.InvoiceEntryMongo;
+import pl.coderstrust.mongomodel.InvoiceMongo;
+
 
 @Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface InvoiceMapper {
@@ -37,20 +38,22 @@ public interface InvoiceMapper {
 
     Collection<Invoice> invoicesMongoToInvoices(Collection<InvoiceMongo> invoices);
 
+    Collection<InvoiceMongo> invoicesToInvoicesMongo(Collection<Invoice> invoices);
+
+    @Mapping(target = "withId", source = "id")
     @Mapping(target = "withName", source = "name")
     @Mapping(target = "withAddress", source = "address")
     @Mapping(target = "withTaxId", source = "taxId")
     @Mapping(target = "withAccountNumber", source = "accountNumber")
-    @Mapping(target = "withId", source = "id")
     @Mapping(target = "withPhoneNumber", source = "phoneNumber")
     @Mapping(target = "withEmail", source = "email")
-    CompanyMongo companyToCompanyMongo (Company company);
+    CompanyMongo companyToCompanyMongo(Company company);
 
+    @Mapping(target = "withId", source = "id")
     @Mapping(target = "withName", source = "name")
     @Mapping(target = "withAddress", source = "address")
     @Mapping(target = "withTaxId", source = "taxId")
     @Mapping(target = "withAccountNumber", source = "accountNumber")
-    @Mapping(target = "withId", source = "id")
     @Mapping(target = "withPhoneNumber", source = "phoneNumber")
     @Mapping(target = "withEmail", source = "email")
     Company companyMongoToCompany(CompanyMongo companyMongo);
@@ -62,7 +65,7 @@ public interface InvoiceMapper {
     @Mapping(target = "withNetValue", source = "netValue")
     @Mapping(target = "withGrossValue", source = "grossValue")
     @Mapping(target = "withVatRate", source = "vatRate")
-    InvoiceEntryMongo invoiceEntryToInvoiceEntryMongo (InvoiceEntry invoiceEntry);
+    InvoiceEntryMongo invoiceEntryToInvoiceEntryMongo(InvoiceEntry invoiceEntry);
 
     @Mapping(target = "withId", source = "id")
     @Mapping(target = "withDescription", source = "description")
@@ -71,5 +74,5 @@ public interface InvoiceMapper {
     @Mapping(target = "withNetValue", source = "netValue")
     @Mapping(target = "withGrossValue", source = "grossValue")
     @Mapping(target = "withVatRate", source = "vatRate")
-    InvoiceEntry invoiceEntryMongoToInvoiceEntry (InvoiceEntryMongo invoiceEntryMongo);
+    InvoiceEntry invoiceEntryMongoToInvoiceEntry(InvoiceEntryMongo invoiceEntryMongo);
 }

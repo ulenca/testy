@@ -1,4 +1,4 @@
-package pl.coderstrust.modelMongo;
+package pl.coderstrust.mongomodel;
 
 public enum VatMongo {
     VAT_0(0.00f),
@@ -18,7 +18,7 @@ public enum VatMongo {
 
     @Override
     public String toString() {
-        return "Vat{"
+        return "VatMongo{"
                 + "value=" + value
                 + '}';
     }
