@@ -26,11 +26,10 @@ public class HibernateDatabase implements Database {
     @Override
     public Invoice save(Invoice invoice) throws DatabaseOperationException {
         if (invoice == null) {
-            log.error("An error occurred during saving invoice");
             throw new IllegalArgumentException("Invoice cannot be null");
         }
         try {
-            log.debug("Saving invoice");
+            log.debug(String.format("Save invoice : %s", invoice));
             return repository.save(invoice);
         } catch (Exception e) {
             log.error("An error occurred during saving invoice", e);
@@ -41,11 +40,10 @@ public class HibernateDatabase implements Database {
     @Override
     public Optional<Invoice> getById(Long id) throws DatabaseOperationException {
         if (id == null) {
-            log.error("An error occurred during getting invoice by ID");
             throw new IllegalArgumentException("Id cannot be null");
         }
         try {
-            log.debug("Getting invoice by ID");
+            log.debug(String.format("Get invoice by ID : %s", id));
             return repository.findById(id);
         } catch (Exception e) {
             log.error("An error occurred during getting invoice by ID", e);
@@ -56,14 +54,13 @@ public class HibernateDatabase implements Database {
     @Override
     public Optional<Invoice> getByNumber(String number) throws DatabaseOperationException {
         if (number == null) {
-            log.error("An error occurred during getting invoice by number");
             throw new IllegalArgumentException("Number cannot be null");
         }
         try {
+            log.debug("Getting invoice by number");
             Example<Invoice> invoiceExample = Example.of(Invoice.builder()
                     .withNumber(number)
                     .build());
-            log.debug("Getting invoice by number");
             return repository.findOne(invoiceExample);
         } catch (Exception e) {
             log.error("An error occurred during getting invoice by number", e);

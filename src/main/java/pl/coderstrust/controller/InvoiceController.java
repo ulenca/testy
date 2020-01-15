@@ -107,9 +107,9 @@ public class InvoiceController {
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getById(@PathVariable("id") Long id) {
         try {
+            log.debug(String.format("Getting invoice by ID: %s", id));
             Optional<Invoice> invoice = invoiceService.getById(id);
             if (invoice.isPresent()) {
-                log.debug(String.format("Getting invoice by ID: %s", invoice));
                 return new ResponseEntity<>(invoice.get(), HttpStatus.OK);
             }
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -132,12 +132,12 @@ public class InvoiceController {
     @GetMapping(value = "/pdf/{id}", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<?> getByIdAsPdf(@PathVariable("id") Long id) {
         try {
+            log.debug(String.format("Getting invoice as PDF : %s", id));
             Optional<Invoice> invoice = invoiceService.getById(id);
             if (invoice.isPresent()) {
                 byte[] invoiceAsPdf = invoicePdfService.createPdf(invoice.get());
                 HttpHeaders httpHeaders = new HttpHeaders();
                 httpHeaders.setContentType(MediaType.APPLICATION_PDF);
-                log.debug(String.format("Getting invoice as PDF : %s", invoice));
                 return new ResponseEntity<>(invoiceAsPdf, httpHeaders, HttpStatus.OK);
             }
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -163,9 +163,9 @@ public class InvoiceController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         try {
+            log.debug(String.format("Getting invoice by Number : %s", number));
             Optional<Invoice> invoice = invoiceService.getByNumber(number);
             if (invoice.isPresent()) {
-                log.debug(String.format("Getting invoice by Number : %s", invoice));
                 return new ResponseEntity<>(invoice.get(), HttpStatus.OK);
             }
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -195,13 +195,13 @@ public class InvoiceController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         try {
+            log.debug(String.format("Update invoice : %s", invoice));
             if (!id.equals(invoice.getId())) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             if (!invoiceService.invoiceExists(id)) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            log.debug(String.format("Update invoice : %s", invoice));
             return new ResponseEntity<>(invoiceService.updateInvoice(invoice), HttpStatus.OK);
         } catch (ServiceOperationException e) {
             log.error("An error occurred during updating invoice", e);
@@ -220,8 +220,8 @@ public class InvoiceController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> remove(@PathVariable Long id) {
         try {
+            log.debug(String.format("Remove invoice : %s", id));
             if (invoiceService.invoiceExists(id)) {
-                log.debug("Deleting invoice");
                 invoiceService.deleteInvoiceById(id);
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
