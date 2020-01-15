@@ -22,20 +22,15 @@ public class MongoDatabase implements Database {
     private InvoiceMapper invoiceMapper;
 
     @Autowired
-    public MongoDatabase(MongoTemplate mongoTemplate, InvoiceMapper invoiceMapper) throws DatabaseOperationException {
+    public MongoDatabase(MongoTemplate mongoTemplate, InvoiceMapper invoiceMapper) {
         this.invoiceMapper = invoiceMapper;
-        try {
-            this.mongoTemplate = mongoTemplate;
-            init();
-        } catch (Exception e) {
-            throw new DatabaseOperationException();
-        }
+        this.mongoTemplate = mongoTemplate;
+        init();
     }
 
     private void init() {
         Query query = new Query();
         query.with(new Sort(Sort.Direction.DESC, "id"));
-        query.limit(1);
         InvoiceMongo invoiceMongo = mongoTemplate.findOne(query, InvoiceMongo.class);
         if (invoiceMongo == null) {
             lastId = new AtomicLong(0);
@@ -49,16 +44,12 @@ public class MongoDatabase implements Database {
         if (invoice == null) {
             throw new IllegalArgumentException("Invoice cannot be null");
         }
-        InvoiceMongo invoiceMongo = invoiceMapper.invoiceToInvoiceMongo(invoice);
-        InvoiceMongo savedMongoInvoice;
         try {
-            InvoiceMongo invoiceInMongoDatabase = getInvoiceById(invoice.getId());
-            if (invoiceInMongoDatabase != null) {
-                savedMongoInvoice = update(invoiceMongo, invoiceInMongoDatabase.getMongoId());
-                return invoiceMapper.invoiceMongoToInvoice(savedMongoInvoice);
+            InvoiceMongo invoiceInDatabase = getInvoiceById(invoice.getId());
+            if (invoiceInDatabase != null) {
+                return update(invoice, invoiceInDatabase.getMongoId());
             }
-            savedMongoInvoice = add(invoiceMongo);
-            return invoiceMapper.invoiceMongoToInvoice(savedMongoInvoice);
+            return add(invoice);
         } catch (Exception e) {
             throw new DatabaseOperationException();
         }
@@ -68,20 +59,22 @@ public class MongoDatabase implements Database {
         return mongoTemplate.findOne(Query.query(Criteria.where("id").is(id)), InvoiceMongo.class);
     }
 
-    private InvoiceMongo update(InvoiceMongo invoice, String mongoId) {
+    private Invoice update(Invoice invoice, String mongoId) {
+        InvoiceMongo mappedInvoice = invoiceMapper.invoiceToInvoiceMongo(invoice);
         InvoiceMongo invoiceToUpdate = InvoiceMongo.builder()
-                .withInvoiceMongo(invoice)
+                .withInvoiceMongo(mappedInvoice)
                 .withMongoId(mongoId)
                 .build();
-        return mongoTemplate.save(invoiceToUpdate);
+        return invoiceMapper.invoiceMongoToInvoice(mongoTemplate.save(invoiceToUpdate));
     }
 
-    private InvoiceMongo add(InvoiceMongo invoice) {
+    private Invoice add(Invoice invoice) {
+        InvoiceMongo mappedInvoice = invoiceMapper.invoiceToInvoiceMongo(invoice);
         InvoiceMongo invoiceToAdd = InvoiceMongo.builder()
-                .withInvoiceMongo(invoice)
+                .withInvoiceMongo(mappedInvoice)
                 .withId(lastId.incrementAndGet())
                 .build();
-        return mongoTemplate.save(invoiceToAdd);
+        return invoiceMapper.invoiceMongoToInvoice(mongoTemplate.save(invoiceToAdd));
     }
 
     @Override
@@ -90,7 +83,11 @@ public class MongoDatabase implements Database {
             throw new IllegalArgumentException("Id cannot be null");
         }
         try {
-            return Optional.ofNullable(invoiceMapper.invoiceMongoToInvoice(getInvoiceById(id)));
+            InvoiceMongo invoice = getInvoiceById(id);
+            if (invoice == null) {
+                return Optional.empty();
+            }
+            return Optional.of(invoiceMapper.invoiceMongoToInvoice(invoice));
         } catch (Exception e) {
             throw new DatabaseOperationException();
         }
@@ -103,7 +100,11 @@ public class MongoDatabase implements Database {
         }
         try {
             Query query = Query.query(Criteria.where("number").is(number));
-            return Optional.ofNullable(invoiceMapper.invoiceMongoToInvoice(mongoTemplate.findOne(query, InvoiceMongo.class)));
+            InvoiceMongo invoice = mongoTemplate.findOne(query, InvoiceMongo.class);
+            if (invoice == null) {
+                return Optional.empty();
+            }
+            return Optional.of(invoiceMapper.invoiceMongoToInvoice(invoice));
         } catch (Exception e) {
             throw new DatabaseOperationException();
         }
@@ -123,14 +124,9 @@ public class MongoDatabase implements Database {
         if (id == null) {
             throw new IllegalArgumentException("Id cannot be null");
         }
-        InvoiceMongo invoice;
-        try {
-            invoice = mongoTemplate.findAndRemove(Query.query(Criteria.where("id").is(id)), InvoiceMongo.class);
-        } catch (Exception e) {
-            throw new DatabaseOperationException();
-        }
-        if (invoice == null) {
-            throw new DatabaseOperationException(String.format("There is no invoice with id: %s", id));
+        InvoiceMongo removedInvoice = mongoTemplate.findAndRemove(Query.query(Criteria.where("id").is(id)), InvoiceMongo.class);
+        if (removedInvoice == null) {
+            throw new DatabaseOperationException(String.format("There was no invoice in database with id: %s", id));
         }
     }
 

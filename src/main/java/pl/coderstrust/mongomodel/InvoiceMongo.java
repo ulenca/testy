@@ -21,12 +21,12 @@ public final class InvoiceMongo {
 
     @Indexed(unique = true)
     private final Long id;
-
     private final CompanyMongo seller;
-
     private final CompanyMongo buyer;
-
     private final List<InvoiceEntryMongo> entries;
+    private final String number;
+    private final LocalDate issuedDate;
+    private final LocalDate dueDate;
 
     @PersistenceConstructor
     private InvoiceMongo(String mongoId, Long id, String number, LocalDate issuedDate, LocalDate dueDate, CompanyMongo seller, CompanyMongo buyer, ArrayList<InvoiceEntryMongo> entries) {
@@ -39,10 +39,6 @@ public final class InvoiceMongo {
         this.buyer = buyer;
         this.entries = entries;
     }
-
-    private final String number;
-    private final LocalDate issuedDate;
-    private final LocalDate dueDate;
 
     private InvoiceMongo() {
         id = null;

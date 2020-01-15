@@ -9,7 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import org.springframework.data.annotation.PersistenceConstructor;
 
 @ApiModel(value = "Company")
 @JsonDeserialize(builder = Company.CompanyBuilder.class)
@@ -32,17 +31,6 @@ public final class Company implements Serializable {
     private final String phoneNumber;
     @ApiModelProperty(value = "Company email address", required = true, example = "someAddress@gmail.com")
     private final String email;
-
-    @PersistenceConstructor
-    private Company(Long id, String name, String address, String taxId, String accountNumber, String phoneNumber, String email) {
-        this.id = id;
-        this.name = name;
-        this.address = address;
-        this.taxId = taxId;
-        this.accountNumber = accountNumber;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-    }
 
     private Company() {
         id = null;
@@ -105,8 +93,7 @@ public final class Company implements Serializable {
             return false;
         }
         Company company = (Company) o;
-        return id.equals(company.id)
-                && name.equals(company.name)
+        return name.equals(company.name)
                 && address.equals(company.address)
                 && taxId.equals(company.taxId)
                 && accountNumber.equals(company.accountNumber)

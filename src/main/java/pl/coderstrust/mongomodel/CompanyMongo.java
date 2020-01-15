@@ -7,7 +7,6 @@ import org.springframework.data.annotation.PersistenceConstructor;
 @JsonDeserialize(builder = CompanyMongo.CompanyBuilder.class)
 public final class CompanyMongo {
 
-    private final Long id;
     private final String name;
     private final String address;
     private final String taxId;
@@ -16,8 +15,7 @@ public final class CompanyMongo {
     private final String email;
 
     @PersistenceConstructor
-    private CompanyMongo(Long id, String name, String address, String taxId, String accountNumber, String phoneNumber, String email) {
-        this.id = id;
+    private CompanyMongo(String name, String address, String taxId, String accountNumber, String phoneNumber, String email) {
         this.name = name;
         this.address = address;
         this.taxId = taxId;
@@ -27,7 +25,6 @@ public final class CompanyMongo {
     }
 
     private CompanyMongo() {
-        id = null;
         name = null;
         address = null;
         taxId = null;
@@ -37,7 +34,6 @@ public final class CompanyMongo {
     }
 
     private CompanyMongo(CompanyBuilder builder) {
-        id = builder.id;
         name = builder.name;
         address = builder.address;
         taxId = builder.taxId;
@@ -48,10 +44,6 @@ public final class CompanyMongo {
 
     public static CompanyBuilder builder() {
         return new CompanyBuilder();
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getName() {
@@ -87,8 +79,7 @@ public final class CompanyMongo {
             return false;
         }
         CompanyMongo company = (CompanyMongo) o;
-        return id.equals(company.id)
-                && name.equals(company.name)
+        return name.equals(company.name)
                 && address.equals(company.address)
                 && taxId.equals(company.taxId)
                 && accountNumber.equals(company.accountNumber)
@@ -98,13 +89,12 @@ public final class CompanyMongo {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, address, taxId, accountNumber, phoneNumber, email);
+        return Objects.hash(name, address, taxId, accountNumber, phoneNumber, email);
     }
 
     @Override
     public String toString() {
         return "CompanyMongo{"
-                + "id='" + id + '\''
                 + ", name='" + name + '\''
                 + ", address='" + address + '\''
                 + ", taxId='" + taxId + '\''
@@ -115,7 +105,6 @@ public final class CompanyMongo {
     }
 
     public static final class CompanyBuilder {
-        private Long id;
         private String name;
         private String address;
         private String taxId;
@@ -124,7 +113,6 @@ public final class CompanyMongo {
         private String email;
 
         public CompanyBuilder withCompanyMongo(CompanyMongo company) {
-            this.id = company.id;
             this.name = company.name;
             this.address = company.address;
             this.taxId = company.taxId;
@@ -136,11 +124,6 @@ public final class CompanyMongo {
 
         public CompanyBuilder withName(String name) {
             this.name = name;
-            return this;
-        }
-
-        public CompanyBuilder withId(Long id) {
-            this.id = id;
             return this;
         }
 

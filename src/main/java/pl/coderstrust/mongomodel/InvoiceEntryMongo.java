@@ -1,14 +1,11 @@
 package pl.coderstrust.mongomodel;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.math.BigDecimal;
 import java.util.Objects;
 import org.springframework.data.annotation.PersistenceConstructor;
 
-@JsonDeserialize(builder = pl.coderstrust.model.InvoiceEntry.InvoiceEntryBuilder.class)
 public final class InvoiceEntryMongo {
 
-    private final Long id;
     private final String description;
     private final long quantity;
     private final BigDecimal price;
@@ -17,8 +14,7 @@ public final class InvoiceEntryMongo {
     private final VatMongo vatRate;
 
     @PersistenceConstructor
-    private InvoiceEntryMongo(Long id, String description, long quantity, BigDecimal price, BigDecimal netValue, BigDecimal grossValue, VatMongo vatRate) {
-        this.id = id;
+    private InvoiceEntryMongo(String description, long quantity, BigDecimal price, BigDecimal netValue, BigDecimal grossValue, VatMongo vatRate) {
         this.description = description;
         this.quantity = quantity;
         this.price = price;
@@ -28,7 +24,6 @@ public final class InvoiceEntryMongo {
     }
 
     private InvoiceEntryMongo() {
-        id = null;
         description = null;
         quantity = 0;
         price = null;
@@ -38,7 +33,6 @@ public final class InvoiceEntryMongo {
     }
 
     private InvoiceEntryMongo(InvoiceEntryBuilder builder) {
-        id = builder.id;
         description = builder.description;
         quantity = builder.quantity;
         price = builder.price;
@@ -49,10 +43,6 @@ public final class InvoiceEntryMongo {
 
     public static InvoiceEntryBuilder builder() {
         return new InvoiceEntryBuilder();
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getDescription() {
@@ -88,8 +78,7 @@ public final class InvoiceEntryMongo {
             return false;
         }
         InvoiceEntryMongo entry = (InvoiceEntryMongo) o;
-        return id.equals(entry.id)
-                && description.equals(entry.description)
+        return description.equals(entry.description)
                 && quantity == entry.quantity
                 && price.equals(entry.price)
                 && netValue.equals(entry.netValue)
@@ -99,13 +88,12 @@ public final class InvoiceEntryMongo {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, description, quantity, price, netValue, grossValue, vatRate);
+        return Objects.hash(description, quantity, price, netValue, grossValue, vatRate);
     }
 
     @Override
     public String toString() {
         return "InvoiceEntryMongo{"
-                + "id='" + id + '\''
                 + ", description='" + description + '\''
                 + ", quantity=" + quantity
                 + ", price=" + price
@@ -116,7 +104,6 @@ public final class InvoiceEntryMongo {
     }
 
     public static final class InvoiceEntryBuilder {
-        private Long id;
         private String description;
         private long quantity;
         private BigDecimal price;
@@ -125,18 +112,12 @@ public final class InvoiceEntryMongo {
         private VatMongo vatRate;
 
         public InvoiceEntryBuilder withInvoiceEntryMongo(InvoiceEntryMongo invoiceEntry) {
-            this.id = invoiceEntry.id;
             this.description = invoiceEntry.description;
             this.quantity = invoiceEntry.quantity;
             this.price = invoiceEntry.price;
             this.netValue = invoiceEntry.netValue;
             this.grossValue = invoiceEntry.grossValue;
             this.vatRate = invoiceEntry.vatRate;
-            return this;
-        }
-
-        public InvoiceEntryBuilder withId(Long id) {
-            this.id = id;
             return this;
         }
 

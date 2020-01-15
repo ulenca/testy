@@ -16,8 +16,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import org.springframework.data.annotation.PersistenceConstructor;
-import org.springframework.data.mongodb.core.index.Indexed;
 
 @ApiModel(value = "Invoice")
 @JsonDeserialize(builder = Invoice.InvoiceBuilder.class)
@@ -51,17 +49,6 @@ public final class Invoice implements Serializable {
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private final List<InvoiceEntry> entries;
-
-    @PersistenceConstructor
-    private Invoice(Long id, String number, LocalDate issuedDate, LocalDate dueDate, Company seller, Company buyer, ArrayList<InvoiceEntry> entries) {
-        this.id = id;
-        this.number = number;
-        this.issuedDate = issuedDate;
-        this.dueDate = dueDate;
-        this.seller = seller;
-        this.buyer = buyer;
-        this.entries = entries;
-    }
 
     private final String number;
     private final LocalDate issuedDate;
@@ -174,10 +161,6 @@ public final class Invoice implements Serializable {
             this.seller = invoice.seller;
             this.buyer = invoice.buyer;
             this.entries = invoice.entries;
-            return this;
-        }
-
-        public Invoice.InvoiceBuilder withMongoId(String mongoId) {
             return this;
         }
 

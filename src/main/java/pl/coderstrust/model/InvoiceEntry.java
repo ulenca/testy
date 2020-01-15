@@ -10,7 +10,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import org.springframework.data.annotation.PersistenceConstructor;
 
 @ApiModel(value = "Invoice entry ")
 @JsonDeserialize(builder = InvoiceEntry.InvoiceEntryBuilder.class)
@@ -33,17 +32,6 @@ public final class InvoiceEntry implements Serializable {
     private final BigDecimal grossValue;
     @ApiModelProperty(value = "Vat rate", required = true, example = "VAT_23")
     private final Vat vatRate;
-
-    @PersistenceConstructor
-    private InvoiceEntry(Long id, String description, long quantity, BigDecimal price, BigDecimal netValue, BigDecimal grossValue, Vat vatRate) {
-        this.id = id;
-        this.description = description;
-        this.quantity = quantity;
-        this.price = price;
-        this.netValue = netValue;
-        this.grossValue = grossValue;
-        this.vatRate = vatRate;
-    }
 
     private InvoiceEntry() {
         id = null;
@@ -106,8 +94,7 @@ public final class InvoiceEntry implements Serializable {
             return false;
         }
         InvoiceEntry entry = (InvoiceEntry) o;
-        return id.equals(entry.id)
-                && description.equals(entry.description)
+        return description.equals(entry.description)
                 && quantity == entry.quantity
                 && price.equals(entry.price)
                 && netValue.equals(entry.netValue)
