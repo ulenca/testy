@@ -14,7 +14,6 @@ import pl.coderstrust.model.Invoice;
 import pl.coderstrust.mongomodel.InvoiceMongo;
 import pl.coderstrust.mongomodel.mapper.InvoiceMapper;
 
-@Repository
 public class MongoDatabase implements Database {
 
     private MongoTemplate mongoTemplate;

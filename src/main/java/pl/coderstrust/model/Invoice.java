@@ -25,10 +25,6 @@ public final class Invoice implements Serializable {
     @ApiModelProperty(value = "The unique identifier of the invoice", position = -1, dataType = "Long")
     @Id
     @org.springframework.data.annotation.Id
-    @JsonIgnore
-    private String mongoId;
-    @Indexed(unique = true)
-    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private final Long id;
     @ApiModelProperty(value = "Invoice number", required = true, example = "180213-002")
@@ -50,10 +46,6 @@ public final class Invoice implements Serializable {
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private final List<InvoiceEntry> entries;
 
-    private final String number;
-    private final LocalDate issuedDate;
-    private final LocalDate dueDate;
-
     private Invoice() {
         id = null;
         seller = null;
@@ -65,7 +57,6 @@ public final class Invoice implements Serializable {
     }
 
     private Invoice(InvoiceBuilder builder) {
-    private Invoice(Invoice.InvoiceBuilder builder) {
         id = builder.id;
         number = builder.number;
         issuedDate = builder.issuedDate;
@@ -117,12 +108,12 @@ public final class Invoice implements Serializable {
         }
         Invoice invoice = (Invoice) o;
         return id.equals(invoice.id)
-            && number.equals(invoice.number)
-            && issuedDate.equals(invoice.issuedDate)
-            && dueDate.equals(invoice.dueDate)
-            && seller.equals(invoice.seller)
-            && buyer.equals(invoice.buyer)
-            && entries.equals(invoice.entries);
+                && number.equals(invoice.number)
+                && issuedDate.equals(invoice.issuedDate)
+                && dueDate.equals(invoice.dueDate)
+                && seller.equals(invoice.seller)
+                && buyer.equals(invoice.buyer)
+                && entries.equals(invoice.entries);
     }
 
     @Override
@@ -133,14 +124,14 @@ public final class Invoice implements Serializable {
     @Override
     public String toString() {
         return "Invoice{"
-            + "id='" + id + '\''
-            + ", number='" + number + '\''
-            + ", issuedDate=" + issuedDate
-            + ", dueDate=" + dueDate
-            + ", seller=" + seller
-            + ", buyer=" + buyer
-            + ", entries=" + entries
-            + '}';
+                + "id='" + id + '\''
+                + ", number='" + number + '\''
+                + ", issuedDate=" + issuedDate
+                + ", dueDate=" + dueDate
+                + ", seller=" + seller
+                + ", buyer=" + buyer
+                + ", entries=" + entries
+                + '}';
     }
 
     public static final class InvoiceBuilder {
@@ -153,7 +144,6 @@ public final class Invoice implements Serializable {
         private List<InvoiceEntry> entries;
 
         public InvoiceBuilder withInvoice(Invoice invoice) {
-        public Invoice.InvoiceBuilder withInvoice(Invoice invoice) {
             this.id = invoice.id;
             this.number = invoice.number;
             this.issuedDate = invoice.issuedDate;
