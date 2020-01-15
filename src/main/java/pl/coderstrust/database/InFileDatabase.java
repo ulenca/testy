@@ -8,6 +8,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 import pl.coderstrust.configuration.InFileDatabaseProperties;
@@ -22,6 +24,8 @@ public class InFileDatabase implements Database {
     private ObjectMapper mapper;
     private InFileDatabaseProperties properties;
     private AtomicLong nextId;
+
+    private static Logger log = LoggerFactory.getLogger(InFileDatabase.class);
 
     public InFileDatabase(InFileDatabaseProperties properties, ObjectMapper mapper, FileHelper fileHelper) throws IOException {
         this.properties = properties;
@@ -46,6 +50,7 @@ public class InFileDatabase implements Database {
         if (invoice == null) {
             return 0;
         }
+        log.debug("Getting last id of last invoice");
         return invoice.getId();
     }
 
@@ -60,6 +65,7 @@ public class InFileDatabase implements Database {
             }
             return add(invoice);
         } catch (IOException e) {
+            log.error("");
             throw new DatabaseOperationException();
         }
     }

@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -32,6 +34,8 @@ import pl.coderstrust.services.ServiceOperationException;
 @RequestMapping("/invoices")
 @Api(value = "/invoices")
 public class InvoiceController {
+
+    private static Logger log = LoggerFactory.getLogger(InvoiceController.class);
 
     private final InvoicePdfService invoicePdfService;
     private InvoiceService invoiceService;
@@ -61,6 +65,7 @@ public class InvoiceController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         try {
+            log.debug(String.format("Adding invoice: %s", invoice));
             if (invoice.getId() != null && invoiceService.invoiceExists(invoice.getId())) {
                 return new ResponseEntity<>(HttpStatus.CONFLICT);
             }
@@ -68,6 +73,7 @@ public class InvoiceController {
             emailService.sendEmailWithInvoice(addedInvoice);
             return new ResponseEntity<>(addedInvoice, HttpStatus.CREATED);
         } catch (ServiceOperationException e) {
+            log.error("An error occurred during adding invoice", e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -81,8 +87,10 @@ public class InvoiceController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAll() {
         try {
+            log.debug("Getting all invoices");
             return new ResponseEntity<>(invoiceService.getAllInvoices(), HttpStatus.OK);
         } catch (ServiceOperationException e) {
+            log.error("An error occurred during getting all invoices", e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -101,10 +109,12 @@ public class InvoiceController {
         try {
             Optional<Invoice> invoice = invoiceService.getById(id);
             if (invoice.isPresent()) {
+                log.debug(String.format("Getting invoice by ID: %s", invoice));
                 return new ResponseEntity<>(invoice.get(), HttpStatus.OK);
             }
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (ServiceOperationException e) {
+            log.error("An error occurred during getting invoice by ID", e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -127,10 +137,12 @@ public class InvoiceController {
                 byte[] invoiceAsPdf = invoicePdfService.createPdf(invoice.get());
                 HttpHeaders httpHeaders = new HttpHeaders();
                 httpHeaders.setContentType(MediaType.APPLICATION_PDF);
+                log.debug(String.format("Getting invoice as PDF : %s", invoice));
                 return new ResponseEntity<>(invoiceAsPdf, httpHeaders, HttpStatus.OK);
             }
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (ServiceOperationException e) {
+            log.error("An error occurred during getting invoice as PDF", e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -153,10 +165,12 @@ public class InvoiceController {
         try {
             Optional<Invoice> invoice = invoiceService.getByNumber(number);
             if (invoice.isPresent()) {
+                log.debug(String.format("Getting invoice by Number : %s", invoice));
                 return new ResponseEntity<>(invoice.get(), HttpStatus.OK);
             }
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (ServiceOperationException e) {
+            log.error("An error occurred during getting invoice by Number", e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -187,8 +201,10 @@ public class InvoiceController {
             if (!invoiceService.invoiceExists(id)) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
+            log.debug(String.format("Update invoice : %s", invoice));
             return new ResponseEntity<>(invoiceService.updateInvoice(invoice), HttpStatus.OK);
         } catch (ServiceOperationException e) {
+            log.error("An error occurred during updating invoice", e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -205,11 +221,13 @@ public class InvoiceController {
     public ResponseEntity<?> remove(@PathVariable Long id) {
         try {
             if (invoiceService.invoiceExists(id)) {
+                log.debug("Deleting invoice");
                 invoiceService.deleteInvoiceById(id);
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (ServiceOperationException e) {
+            log.error("An error occurred during removing invoice", e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -224,9 +242,11 @@ public class InvoiceController {
     @DeleteMapping
     public ResponseEntity<?> removeAll() {
         try {
+            log.debug("Removing all invoices");
             invoiceService.deleteAllInvoices();
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (ServiceOperationException e) {
+            log.error("An error occurred during removing all invoices", e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

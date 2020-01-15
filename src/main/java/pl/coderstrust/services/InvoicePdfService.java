@@ -14,6 +14,8 @@ import com.itextpdf.text.pdf.PdfWriter;
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pl.coderstrust.model.Company;
 import pl.coderstrust.model.Invoice;
@@ -23,6 +25,8 @@ import pl.coderstrust.model.InvoiceEntry;
 public class InvoicePdfService {
 
     private static final String NEW_LINE = "\n";
+
+    private static Logger log = LoggerFactory.getLogger(InvoicePdfService.class);
 
     public byte[] createPdf(Invoice invoice) throws ServiceOperationException {
         if (invoice == null) {
@@ -40,8 +44,10 @@ public class InvoicePdfService {
             document.add(getTableEntriesDescription(invoice.getEntries()));
             document.add(getTotalValueOfInvoice(invoice.getEntries()));
             document.close();
+            log.debug(String.format("Creating pdf: %s", invoice));
             return byteStream.toByteArray();
         } catch (DocumentException e) {
+            log.error("An error occurred during creating pdf", e);
             throw new ServiceOperationException("An error occurred during creating pdf", e);
         }
     }
