@@ -30,7 +30,7 @@ public class FileHelper {
         if (line == null) {
             throw new IllegalArgumentException("Line cannot be null");
         }
-        log.debug("Write line");
+        log.debug(String.format("Writing line to file: %s", line));
         FileUtils.writeLines(new File(filePath), ENCODING.name(), Collections.singleton(line), true);
     }
 
@@ -38,7 +38,7 @@ public class FileHelper {
         if (filePath == null) {
             throw new IllegalArgumentException("File path cannot be null");
         }
-        log.debug("Reading line");
+        log.debug(String.format("Reading line from file: %s", filePath));
         return FileUtils.readLines(new File(filePath), ENCODING);
     }
 
@@ -46,7 +46,7 @@ public class FileHelper {
         if (filePath == null) {
             throw new IllegalArgumentException("File path cannot be null");
         }
-        log.debug("Creating file");
+        log.debug(String.format("Creating new file: %s", filePath));
         Files.createFile(Paths.get(filePath));
     }
 
@@ -57,7 +57,7 @@ public class FileHelper {
         if (!Files.exists(Paths.get(filePath))) {
             throw new NoSuchFileException("File does not exist");
         }
-        log.debug("Deleting file");
+        log.debug(String.format("Deleting file: %s", filePath));
         Files.delete(Paths.get(filePath));
     }
 
@@ -65,7 +65,7 @@ public class FileHelper {
         if (filePath == null) {
             throw new IllegalArgumentException("File path cannot be null");
         }
-        log.debug("Checking existing");
+        log.debug(String.format("Checking is that file exist: %s", filePath));
         return Files.exists(Paths.get(filePath));
     }
 
@@ -76,7 +76,7 @@ public class FileHelper {
         if (!Files.exists(Paths.get(filePath))) {
             throw new NoSuchFileException("File does not exist");
         }
-        log.debug("Checking is that file empty");
+        log.debug(String.format("Checking is that file is empty: %s", filePath));
         return Files.size(Paths.get(filePath)) == 0L;
     }
 
@@ -84,7 +84,7 @@ public class FileHelper {
         if (filePath == null) { ;
             throw new IllegalArgumentException("File path cannot be null");
         }
-        log.debug("Clearing file");
+        log.debug(String.format("Clearing file: %s", filePath));
         FileUtils.write(new File(filePath), "", ENCODING);
     }
 
@@ -100,7 +100,7 @@ public class FileHelper {
         if (lineNumber > lines.size()) {
             throw new IllegalArgumentException("Line number cannot be greater than number of lines in file");
         }
-        log.debug("Removing line");
+        log.debug(String.format("Removing line from file: %s", filePath));
         lines.remove(lineNumber - 1);
         FileUtils.writeLines(file, ENCODING.name(), lines, false);
     }
@@ -109,7 +109,7 @@ public class FileHelper {
         if (filePath == null) {
             throw new IllegalArgumentException("File path cannot be null");
         }
-        log.debug("Reading last line");
+        log.debug(String.format("Reading last line from file: %s", filePath));
         try (ReversedLinesFileReader reader = new ReversedLinesFileReader(new File(filePath), UTF_8)) {
             return reader.readLine();
         }

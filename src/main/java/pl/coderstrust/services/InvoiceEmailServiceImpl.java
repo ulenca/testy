@@ -29,12 +29,12 @@ public class InvoiceEmailServiceImpl implements InvoiceEmailService {
         if (invoice == null) {
             throw new IllegalArgumentException("Invoice cannot be null!");
         }
+        log.debug(String.format("Sending email with invoice: %s", invoice));
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(mailProperties.getProperties().get("to"));
         message.setFrom(mailProperties.getUsername());
         message.setSubject(mailProperties.getProperties().get("subject"));
         message.setText(mailProperties.getProperties().get("content"));
-        log.debug(String.format("Sending email with invoice: %s", invoice));
         emailSender.send(message);
     }
 }

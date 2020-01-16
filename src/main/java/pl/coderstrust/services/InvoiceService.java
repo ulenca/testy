@@ -37,7 +37,7 @@ public class InvoiceService {
             throw new IllegalArgumentException("Id cannot be null");
         }
         try {
-            log.debug("Getting invoice by ID");
+            log.debug(String.format("Getting invoice by ID: %s", id));
             return database.getById(id);
         } catch (DatabaseOperationException e) {
             log.error("An error occurred during getting invoice by ID", e);
@@ -50,7 +50,7 @@ public class InvoiceService {
             throw new IllegalArgumentException("Number cannot be null");
         }
         try {
-            log.debug("Getting invoice by number");
+            log.debug(String.format("Getting invoice by number: %s", number));
             return database.getByNumber(number);
         } catch (DatabaseOperationException e) {
             log.error("An error occurred during getting invoice by number", e);
@@ -63,11 +63,11 @@ public class InvoiceService {
             throw new IllegalArgumentException("Invoice cannot be null");
         }
         try {
+            log.debug(String.format("Adding invoice: %s", invoice));
             Long invoiceId = invoice.getId();
             if (invoiceId != null && database.exists(invoiceId)) {
                 throw new ServiceOperationException("Invoice already exists in database.");
             }
-            log.debug(String.format("Adding invoice: %s", invoice));
             return database.save(invoice);
         } catch (DatabaseOperationException e) {
             log.error("An error occurred during adding invoice", e);
@@ -80,11 +80,11 @@ public class InvoiceService {
             throw new IllegalArgumentException("Invoice cannot be null");
         }
         try {
+            log.debug(String.format("Updating invoice: %s", invoice));
             Long invoiceId = invoice.getId();
             if (invoiceId == null || !database.exists(invoiceId)) {
                 throw new ServiceOperationException("Invoice does not exist in database.");
             }
-            log.debug(String.format("Updating invoice: %s", invoice));
             return database.save(invoice);
         } catch (DatabaseOperationException e) {
             log.error("An error occurred during adding invoice", e);
@@ -100,7 +100,7 @@ public class InvoiceService {
             if (!database.exists(id)) {
                 throw new ServiceOperationException("Invoice does not exist in database.");
             }
-            log.debug("Deleting invoice by ID");
+            log.debug(String.format("Deleting invoice: %s", id));
             database.delete(id);
         } catch (DatabaseOperationException e) {
             log.error("An error occurred during deleting invoice by ID", e);
@@ -123,7 +123,7 @@ public class InvoiceService {
             throw new IllegalArgumentException("Id cannot be null");
         }
         try {
-            log.debug("Checking is that invoice existing");
+            log.debug(String.format("Checking is that invoice exist: %s", id));
             return database.exists(id);
         } catch (DatabaseOperationException e) {
             log.error("An error occurred during checking is that invoice existing", e);

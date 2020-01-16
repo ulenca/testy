@@ -57,7 +57,7 @@ public class HibernateDatabase implements Database {
             throw new IllegalArgumentException("Number cannot be null");
         }
         try {
-            log.debug("Getting invoice by number");
+            log.debug(String.format("Get invoice by number : %s", number));
             Example<Invoice> invoiceExample = Example.of(Invoice.builder()
                     .withNumber(number)
                     .build());
@@ -82,15 +82,13 @@ public class HibernateDatabase implements Database {
     @Override
     public void delete(Long id) throws DatabaseOperationException {
         if (id == null) {
-            log.error("An error occurred during deleting invoice");
             throw new IllegalArgumentException("Id cannot be lower then one");
         }
         try {
             if (!repository.existsById(id)) {
-                log.error("An error occurred during deleting invoice");
                 throw new DatabaseOperationException("Invoice does not exist");
             }
-            log.debug("Deleting invoice");
+            log.debug(String.format("Deleting invoice : %s", id));
             repository.deleteById(id);
         } catch (Exception e) {
             log.error("An error occurred during deleting invoice", e);
@@ -112,11 +110,10 @@ public class HibernateDatabase implements Database {
     @Override
     public boolean exists(Long id) throws DatabaseOperationException {
         if (id == null) {
-            log.error("An error occurred during checking is that invoice exist");
             throw new IllegalArgumentException("Id cannot be null");
         }
         try {
-            log.debug("Checking is that invoice exist");
+            log.debug(String.format("Checking is that invoice exist : %s", id));
             return repository.existsById(id);
         } catch (Exception e) {
             log.error("An error occurred during checking is that invoice exist", e);

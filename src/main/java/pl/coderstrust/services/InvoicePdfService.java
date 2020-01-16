@@ -33,6 +33,7 @@ public class InvoicePdfService {
             throw new IllegalArgumentException("Invoice cannot be null");
         }
         try {
+            log.debug(String.format("Creating pdf: %s", invoice));
             Document document = new Document();
             ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
             PdfWriter.getInstance(document, byteStream);
@@ -44,7 +45,6 @@ public class InvoicePdfService {
             document.add(getTableEntriesDescription(invoice.getEntries()));
             document.add(getTotalValueOfInvoice(invoice.getEntries()));
             document.close();
-            log.debug(String.format("Creating pdf: %s", invoice));
             return byteStream.toByteArray();
         } catch (DocumentException e) {
             log.error("An error occurred during creating pdf", e);
